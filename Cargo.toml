@@ -2,6 +2,7 @@
 name = "minwin"
 version = "0.1.0"
 authors = ["Jascha Neutelings <neutelings.jascha@gmail.com>"]
+readme = "README.md"
 
 [dependencies]
 winapi = "0.2"
