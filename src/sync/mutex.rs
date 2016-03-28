@@ -46,6 +46,7 @@ impl MutexBuilder {
 impl NamedBuilder for MutexBuilder {
     type Output = Mutex;
 
+    #[doc(hidden)]
     fn __create_inner(&self, name: Option<WideString>) -> io::Result<(Mutex, bool)> {
         let mut sa = self.security_attributes;
         let sa_ptr = sa.as_mut().map_or(ptr::null_mut(), |sa| sa);
@@ -126,6 +127,7 @@ impl Mutex {
 }
 
 impl NamedObject for Mutex {
+    #[doc(hidden)]
     fn __open_function() -> NamedOpenFunction {
         k32::OpenMutexW
     }

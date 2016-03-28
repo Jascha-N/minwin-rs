@@ -50,6 +50,7 @@ impl EventBuilder {
 impl NamedBuilder for EventBuilder {
     type Output = Event;
 
+    #[doc(hidden)]
     fn __create_inner(&self, name: Option<WideString>) -> io::Result<(Event, bool)> {
         let mut sa = self.security_attributes;
         let sa_ptr = sa.as_mut().map_or(ptr::null_mut(), |sa| sa);
@@ -129,6 +130,7 @@ impl Event {
 }
 
 impl NamedObject for Event {
+    #[doc(hidden)]
     fn __open_function() -> NamedOpenFunction {
         k32::OpenEventW
     }

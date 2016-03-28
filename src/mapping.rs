@@ -100,6 +100,7 @@ impl<'a> FileMappingBuilder<'a> {
 impl<'a> NamedBuilder for FileMappingBuilder<'a> {
     type Output = FileMapping;
 
+    #[doc(hidden)]
     fn __create_inner(&self, name: Option<WideString>) -> io::Result<(FileMapping, bool)> {
         let protect = self.attributes |
                       match (self.writable, self.executable) {
@@ -178,6 +179,7 @@ impl FileMapping {
 }
 
 impl NamedObject for FileMapping {
+    #[doc(hidden)]
     fn __open_function() -> NamedOpenFunction {
         k32::OpenFileMappingW
     }

@@ -45,6 +45,7 @@ impl SemaphoreBuilder {
 impl NamedBuilder for SemaphoreBuilder {
     type Output = Semaphore;
 
+    #[doc(hidden)]
     fn __create_inner(&self, name: Option<WideString>) -> io::Result<(Semaphore, bool)> {
         let mut sa = self.security_attributes;
         let sa_ptr = sa.as_mut().map_or(ptr::null_mut(), |sa| sa);
@@ -131,6 +132,7 @@ impl Semaphore {
 }
 
 impl NamedObject for Semaphore {
+    #[doc(hidden)]
     fn __open_function() -> NamedOpenFunction {
         k32::OpenSemaphoreW
     }

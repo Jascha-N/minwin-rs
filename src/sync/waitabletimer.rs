@@ -44,6 +44,7 @@ impl WaitableTimerBuilder {
 impl NamedBuilder for WaitableTimerBuilder {
     type Output = WaitableTimer;
 
+    #[doc(hidden)]
     fn __create_inner(&self, name: Option<WideString>) -> io::Result<(WaitableTimer, bool)> {
         let mut sa = self.security_attributes;
         let sa_ptr = sa.as_mut().map_or(ptr::null_mut(), |sa| sa);
@@ -175,6 +176,7 @@ fn filetime_as_time<Tz: TimeZone>(file_time: i64, offset: Tz::Offset) -> DateTim
 }
 
 impl NamedObject for WaitableTimer {
+    #[doc(hidden)]
     fn __open_function() -> NamedOpenFunction {
         k32::OpenWaitableTimerW
     }
