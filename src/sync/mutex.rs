@@ -2,6 +2,7 @@ use chrono::Duration;
 use kernel32 as k32;
 use std::{io, ptr, thread};
 use std::ffi::OsStr;
+use std::marker::PhantomData;
 use std::os::windows::io::{AsRawHandle, FromRawHandle};
 use winapi as w;
 
@@ -95,7 +96,7 @@ impl Mutex {
         MutexBuilder::new().create_named(name)
     }
 
-    pub fn lock(&self) -> Result<MutexLockGuard, LockError> {
+    pub fn lock(&self) -> Result<MutexGuard, LockError> {
         match self.wait() {
             Ok(()) => Ok(self.guard()),
             Err(WaitError::Abandoned(_)) => Err(LockError::Abandoned(self.guard())),
@@ -104,7 +105,7 @@ impl Mutex {
         }
     }
 
-    pub fn try_lock(&self) -> Result<MutexLockGuard, TryLockError> {
+    pub fn try_lock(&self) -> Result<MutexGuard, TryLockError> {
         match self.wait_timeout(Duration::zero()) {
             Ok(()) => Ok(self.guard()),
             Err(WaitError::Timeout) => Err(TryLockError::WouldBlock),
@@ -119,8 +120,8 @@ impl Mutex {
         }
     }
 
-    pub fn guard(&self) -> MutexLockGuard {
-        MutexLockGuard(self)
+    pub fn guard(&self) -> MutexGuard {
+        MutexGuard(self, PhantomData)
     }
 }
 
@@ -135,9 +136,9 @@ impl Waitable for Mutex {}
 
 
 #[derive(Debug)]
-pub struct MutexLockGuard<'a>(&'a Mutex);
+pub struct MutexGuard<'a>(&'a Mutex, PhantomData<::std::sync::MutexGuard<'a, ()>>);
 
-impl<'a> Drop for MutexLockGuard<'a> {
+impl<'a> Drop for MutexGuard<'a> {
     fn drop(&mut self) {
         // Leak the lock on purpose if a panic occurs.
         if !thread::panicking() {
@@ -148,13 +149,13 @@ impl<'a> Drop for MutexLockGuard<'a> {
 
 #[derive(Debug)]
 pub enum LockError<'a> {
-    Abandoned(MutexLockGuard<'a>),
+    Abandoned(MutexGuard<'a>),
     Io(io::Error),
 }
 
 #[derive(Debug)]
 pub enum TryLockError<'a> {
-    Abandoned(MutexLockGuard<'a>),
+    Abandoned(MutexGuard<'a>),
     WouldBlock,
     Io(io::Error),
 }
