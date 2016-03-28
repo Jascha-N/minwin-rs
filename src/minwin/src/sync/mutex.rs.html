@@ -201,11 +201,13 @@
 <span id="158">158</span>
 <span id="159">159</span>
 <span id="160">160</span>
+<span id="161">161</span>
 </pre><pre class='rust '>
 <span class='kw'>use</span> <span class='ident'>chrono</span>::<span class='ident'>Duration</span>;
 <span class='kw'>use</span> <span class='ident'>kernel32</span> <span class='kw'>as</span> <span class='ident'>k32</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::{<span class='ident'>io</span>, <span class='ident'>ptr</span>, <span class='ident'>thread</span>};
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>ffi</span>::<span class='ident'>OsStr</span>;
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>marker</span>::<span class='ident'>PhantomData</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>os</span>::<span class='ident'>windows</span>::<span class='ident'>io</span>::{<span class='ident'>AsRawHandle</span>, <span class='ident'>FromRawHandle</span>};
 <span class='kw'>use</span> <span class='ident'>winapi</span> <span class='kw'>as</span> <span class='ident'>w</span>;
 
@@ -299,7 +301,7 @@
         <span class='ident'>MutexBuilder</span>::<span class='ident'>new</span>().<span class='ident'>create_named</span>(<span class='ident'>name</span>)
     }
 
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>lock</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>MutexLockGuard</span>, <span class='ident'>LockError</span><span class='op'>&gt;</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>lock</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>MutexGuard</span>, <span class='ident'>LockError</span><span class='op'>&gt;</span> {
         <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>wait</span>() {
             <span class='prelude-val'>Ok</span>(()) <span class='op'>=&gt;</span> <span class='prelude-val'>Ok</span>(<span class='self'>self</span>.<span class='ident'>guard</span>()),
             <span class='prelude-val'>Err</span>(<span class='ident'>WaitError</span>::<span class='ident'>Abandoned</span>(_)) <span class='op'>=&gt;</span> <span class='prelude-val'>Err</span>(<span class='ident'>LockError</span>::<span class='ident'>Abandoned</span>(<span class='self'>self</span>.<span class='ident'>guard</span>())),
@@ -308,7 +310,7 @@
         }
     }
 
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>try_lock</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>MutexLockGuard</span>, <span class='ident'>TryLockError</span><span class='op'>&gt;</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>try_lock</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>MutexGuard</span>, <span class='ident'>TryLockError</span><span class='op'>&gt;</span> {
         <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>wait_timeout</span>(<span class='ident'>Duration</span>::<span class='ident'>zero</span>()) {
             <span class='prelude-val'>Ok</span>(()) <span class='op'>=&gt;</span> <span class='prelude-val'>Ok</span>(<span class='self'>self</span>.<span class='ident'>guard</span>()),
             <span class='prelude-val'>Err</span>(<span class='ident'>WaitError</span>::<span class='ident'>Timeout</span>) <span class='op'>=&gt;</span> <span class='prelude-val'>Err</span>(<span class='ident'>TryLockError</span>::<span class='ident'>WouldBlock</span>),
@@ -323,8 +325,8 @@
         }
     }
 
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>guard</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>MutexLockGuard</span> {
-        <span class='ident'>MutexLockGuard</span>(<span class='self'>self</span>)
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>guard</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>MutexGuard</span> {
+        <span class='ident'>MutexGuard</span>(<span class='self'>self</span>, <span class='ident'>PhantomData</span>)
     }
 }
 
@@ -339,9 +341,9 @@
 
 
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>MutexLockGuard</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>Mutex</span>);
+<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>MutexGuard</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>Mutex</span>, <span class='ident'>PhantomData</span><span class='op'>&lt;</span>::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>MutexGuard</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, ()<span class='op'>&gt;&gt;</span>);
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> <span class='ident'>Drop</span> <span class='kw'>for</span> <span class='ident'>MutexLockGuard</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> {
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> <span class='ident'>Drop</span> <span class='kw'>for</span> <span class='ident'>MutexGuard</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> {
     <span class='kw'>fn</span> <span class='ident'>drop</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) {
         <span class='comment'>// Leak the lock on purpose if a panic occurs.</span>
         <span class='kw'>if</span> <span class='op'>!</span><span class='ident'>thread</span>::<span class='ident'>panicking</span>() {
@@ -352,13 +354,13 @@
 
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>LockError</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> {
-    <span class='ident'>Abandoned</span>(<span class='ident'>MutexLockGuard</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span>),
+    <span class='ident'>Abandoned</span>(<span class='ident'>MutexGuard</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span>),
     <span class='ident'>Io</span>(<span class='ident'>io</span>::<span class='ident'>Error</span>),
 }
 
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>TryLockError</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> {
-    <span class='ident'>Abandoned</span>(<span class='ident'>MutexLockGuard</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span>),
+    <span class='ident'>Abandoned</span>(<span class='ident'>MutexGuard</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span>),
     <span class='ident'>WouldBlock</span>,
     <span class='ident'>Io</span>(<span class='ident'>io</span>::<span class='ident'>Error</span>),
 }

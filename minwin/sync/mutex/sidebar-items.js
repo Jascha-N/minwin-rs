@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["LockError",""],["MutexAccess",""],["TryLockError",""]],"struct":[["Mutex",""],["MutexBuilder",""],["MutexLockGuard",""]]});
+initSidebarItems({"enum":[["LockError",""],["MutexAccess",""],["TryLockError",""]],"struct":[["Mutex",""],["MutexBuilder",""],["MutexGuard",""]]});
