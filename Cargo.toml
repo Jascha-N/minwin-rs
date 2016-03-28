@@ -1,0 +1,14 @@
+[package]
+name = "minwin"
+version = "0.1.0"
+authors = ["Jascha Neutelings <neutelings.jascha@gmail.com>"]
+
+[dependencies]
+winapi = "0.2"
+kernel32-sys = "0.2"
+chrono = "0.2"
+enum-set = "0.0.6"
+
+[dependencies.clippy]
+version = "*"
+optional = true
