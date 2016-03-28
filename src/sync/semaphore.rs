@@ -1,7 +1,9 @@
 use kernel32 as k32;
 use chrono::Duration;
 use std::{io, mem, ptr};
+use std::error::Error;
 use std::ffi::OsStr;
+use std::fmt::{self, Display, Formatter};
 use std::os::windows::io::{AsRawHandle, FromRawHandle};
 use winapi as w;
 
@@ -96,7 +98,7 @@ impl Semaphore {
         SemaphoreBuilder::new(maximum_count).create_named(name)
     }
 
-    pub fn obtain(&self) -> io::Result<SemaphoreGuard> {
+    pub fn acquire(&self) -> io::Result<SemaphoreGuard> {
         match self.wait() {
             Ok(()) => Ok(self.guard(1)),
             Err(WaitError::Io(error)) => Err(error),
@@ -104,11 +106,11 @@ impl Semaphore {
         }
     }
 
-    pub fn try_obtain(&self) -> Result<SemaphoreGuard, TryObtainError> {
+    pub fn try_acquire(&self) -> Result<SemaphoreGuard, TryAcquireError> {
         match self.wait_timeout(Duration::zero()) {
             Ok(()) => Ok(self.guard(1)),
-            Err(WaitError::Timeout) => Err(TryObtainError::WouldBlock),
-            Err(WaitError::Io(error)) => Err(TryObtainError::Io(error)),
+            Err(WaitError::Timeout) => Err(TryAcquireError::WouldBlock),
+            Err(WaitError::Io(error)) => Err(TryAcquireError::Io(error)),
             _ => unreachable!(),
         }
     }
@@ -154,8 +156,28 @@ impl<'a> Drop for SemaphoreGuard<'a> {
     }
 }
 
+
+
 #[derive(Debug)]
-pub enum TryObtainError {
+pub enum TryAcquireError {
     WouldBlock,
     Io(io::Error),
+}
+
+impl Error for TryAcquireError {
+    fn description(&self) -> &str {
+        match *self {
+            TryAcquireError::WouldBlock => "operation would block",
+            TryAcquireError::Io(_) => "I/O error"
+        }
+    }
+}
+
+impl Display for TryAcquireError {
+    fn fmt(&self, formatter: &mut Formatter) -> fmt::Result {
+        match *self {
+            TryAcquireError::WouldBlock => write!(formatter, "The operation would block"),
+            TryAcquireError::Io(ref error) => write!(formatter, "An I/O error occurred: {}", error)
+        }
+    }
 }

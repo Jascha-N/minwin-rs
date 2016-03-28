@@ -1,5 +1,7 @@
 use chrono::Duration;
 use kernel32 as k32;
+use std::error::Error;
+use std::fmt::{self, Display, Formatter};
 use std::io;
 use winapi as w;
 
@@ -7,7 +9,6 @@ use object::Object;
 
 
 
-// TODO: implement Error
 #[derive(Debug)]
 pub enum WaitError {
     Abandoned(usize),
@@ -15,11 +16,33 @@ pub enum WaitError {
     Io(io::Error),
 }
 
+impl Error for WaitError {
+    fn description(&self) -> &str {
+        match *self {
+            WaitError::Abandoned(_) => "abandoned mutex",
+            WaitError::Timeout => "wait timeout",
+            WaitError::Io(_) => "I/O error"
+        }
+    }
+}
+
+impl Display for WaitError {
+    fn fmt(&self, formatter: &mut Formatter) -> fmt::Result {
+        match *self {
+            WaitError::Abandoned(_) => write!(formatter, "A thread that owned a mutex terminated"),
+            WaitError::Timeout => write!(formatter, "A wait timed out"),
+            WaitError::Io(ref error) => write!(formatter, "An I/O error occurred: {}", error)
+        }
+    }
+}
+
 impl From<io::Error> for WaitError {
     fn from(error: io::Error) -> WaitError {
         WaitError::Io(error)
     }
 }
+
+
 
 pub type WaitResult<T> = Result<T, WaitError>;
 

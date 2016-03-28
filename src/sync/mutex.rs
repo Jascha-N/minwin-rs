@@ -1,7 +1,9 @@
 use chrono::Duration;
 use kernel32 as k32;
 use std::{io, ptr, thread};
+use std::error::Error;
 use std::ffi::OsStr;
+use std::fmt::{self, Display, Formatter};
 use std::marker::PhantomData;
 use std::os::windows::io::{AsRawHandle, FromRawHandle};
 use winapi as w;
@@ -149,15 +151,57 @@ impl<'a> Drop for MutexGuard<'a> {
     }
 }
 
+
+
 #[derive(Debug)]
 pub enum LockError<'a> {
     Abandoned(MutexGuard<'a>),
     Io(io::Error),
 }
 
+impl<'a> Error for LockError<'a> {
+    fn description(&self) -> &str {
+        match *self {
+            LockError::Abandoned(_) => "abandoned mutex error",
+            LockError::Io(_) => "I/O error"
+        }
+    }
+}
+
+impl<'a> Display for LockError<'a> {
+    fn fmt(&self, formatter: &mut Formatter) -> fmt::Result {
+        match *self {
+            LockError::Abandoned(_) => write!(formatter, "The thread that owned the mutex terminated"),
+            LockError::Io(ref error) => write!(formatter, "An I/O error occurred: {}", error)
+        }
+    }
+}
+
+
+
 #[derive(Debug)]
 pub enum TryLockError<'a> {
     Abandoned(MutexGuard<'a>),
     WouldBlock,
     Io(io::Error),
+}
+
+impl<'a> Error for TryLockError<'a> {
+    fn description(&self) -> &str {
+        match *self {
+            TryLockError::Abandoned(_) => "abandoned mutex",
+            TryLockError::WouldBlock => "operation would block",
+            TryLockError::Io(_) => "I/O error"
+        }
+    }
+}
+
+impl<'a> Display for TryLockError<'a> {
+    fn fmt(&self, formatter: &mut Formatter) -> fmt::Result {
+        match *self {
+            TryLockError::Abandoned(_) => write!(formatter, "The thread that owned the mutex terminated"),
+            TryLockError::WouldBlock => write!(formatter, "The operation would block"),
+            TryLockError::Io(ref error) => write!(formatter, "An I/O error occurred: {}", error)
+        }
+    }
 }
