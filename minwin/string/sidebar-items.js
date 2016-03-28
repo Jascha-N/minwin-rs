@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["ansi_to_wide",""],["ansi_to_wide_null",""],["wide_to_ansi",""],["wide_to_ansi_null",""]],"struct":[["NulError",""]],"trait":[["ToAnsiString",""],["ToWideString",""]],"type":[["AnsiStr",""],["AnsiString",""],["WideStr",""],["WideString",""]]});

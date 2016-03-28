@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["SemaphoreAccess",""],["TryObtainError",""]],"struct":[["Semaphore",""],["SemaphoreBuilder",""],["SemaphoreGuard",""]]});

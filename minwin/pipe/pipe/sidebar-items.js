@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["create_pipe",""]],"struct":[["PipeBuilder",""],["ReadPipe",""],["WritePipe",""]]});
