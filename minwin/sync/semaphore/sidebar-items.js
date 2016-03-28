@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["SemaphoreAccess",""],["TryObtainError",""]],"struct":[["Semaphore",""],["SemaphoreBuilder",""],["SemaphoreGuard",""]]});
+initSidebarItems({"enum":[["SemaphoreAccess",""],["TryAcquireError",""]],"struct":[["Semaphore",""],["SemaphoreBuilder",""],["SemaphoreGuard",""]]});
