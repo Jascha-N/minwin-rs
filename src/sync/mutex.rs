@@ -162,7 +162,7 @@ pub enum LockError<'a> {
 impl<'a> Error for LockError<'a> {
     fn description(&self) -> &str {
         match *self {
-            LockError::Abandoned(_) => "abandoned mutex error",
+            LockError::Abandoned(_) => "abandoned mutex",
             LockError::Io(_) => "I/O error"
         }
     }
