@@ -101,7 +101,7 @@ impl Mutex {
 
     pub fn lock(&self) -> Result<MutexGuard, LockError> {
         match self.wait() {
-            Ok(()) => Ok(self.guard()),
+            Ok(_) => Ok(self.guard()),
             Err(WaitError::Abandoned(_)) => Err(LockError::Abandoned(self.guard())),
             Err(WaitError::Io(error)) => Err(LockError::Io(error)),
             _ => unreachable!(),
@@ -110,7 +110,7 @@ impl Mutex {
 
     pub fn try_lock(&self) -> Result<MutexGuard, TryLockError> {
         match self.wait_timeout(Duration::zero()) {
-            Ok(()) => Ok(self.guard()),
+            Ok(_) => Ok(self.guard()),
             Err(WaitError::Timeout) => Err(TryLockError::WouldBlock),
             Err(WaitError::Abandoned(_)) => Err(TryLockError::Abandoned(self.guard())),
             Err(WaitError::Io(error)) => Err(TryLockError::Io(error)),

@@ -100,7 +100,7 @@ impl Semaphore {
 
     pub fn acquire(&self) -> io::Result<SemaphoreGuard> {
         match self.wait() {
-            Ok(()) => Ok(self.guard(1)),
+            Ok(_) => Ok(self.guard(1)),
             Err(WaitError::Io(error)) => Err(error),
             _ => unreachable!(),
         }
@@ -108,7 +108,7 @@ impl Semaphore {
 
     pub fn try_acquire(&self) -> Result<SemaphoreGuard, TryAcquireError> {
         match self.wait_timeout(Duration::zero()) {
-            Ok(()) => Ok(self.guard(1)),
+            Ok(_) => Ok(self.guard(1)),
             Err(WaitError::Timeout) => Err(TryAcquireError::WouldBlock),
             Err(WaitError::Io(error)) => Err(TryAcquireError::Io(error)),
             _ => unreachable!(),

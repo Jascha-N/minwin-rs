@@ -59,13 +59,13 @@ impl<'a> FileMappingBuilder<'a> {
         self
     }
 
-    pub fn write(&mut self, can_write: bool) -> &mut FileMappingBuilder<'a> {
-        self.writable = can_write;
+    pub fn writable(&mut self, writable: bool) -> &mut FileMappingBuilder<'a> {
+        self.writable = writable;
         self
     }
 
-    pub fn execute(&mut self, can_execute: bool) -> &mut FileMappingBuilder<'a> {
-        self.executable = can_execute;
+    pub fn executable(&mut self, executable: bool) -> &mut FileMappingBuilder<'a> {
+        self.executable = executable;
         self
     }
 
@@ -208,8 +208,8 @@ impl<'a> FileViewBuilder<'a> {
         self
     }
 
-    pub fn execute(&mut self, can_execute: bool) -> &mut FileViewBuilder<'a> {
-        self.executable = can_execute;
+    pub fn executable(&mut self, executable: bool) -> &mut FileViewBuilder<'a> {
+        self.executable = executable;
         self
     }
 
@@ -290,7 +290,7 @@ impl FileView {
 impl Drop for FileView {
     fn drop(&mut self) {
         unsafe {
-            debug_assert!(k32::UnmapViewOfFile(self.address as *mut _) != w::FALSE);
+            debug_assert!(k32::UnmapViewOfFile(self.address as w::LPVOID) != w::FALSE);
         }
     }
 }
