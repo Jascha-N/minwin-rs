@@ -1,8 +1,5 @@
-macro_rules! object {
+macro_rules! handle {
     ($name: ident) => {
-        #[derive(Debug)]
-        pub struct $name($crate::handle::Handle);
-
         impl ::std::os::windows::io::FromRawHandle for $name {
             unsafe fn from_raw_handle(handle: ::std::os::windows::io::RawHandle) -> $name {
                 $name($crate::handle::Handle::from_raw_handle(handle))

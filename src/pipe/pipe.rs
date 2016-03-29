@@ -4,6 +4,7 @@ use std::io::{self, Read, Write};
 use std::os::windows::io::{AsRawHandle, FromRawHandle};
 use winapi as w;
 
+use handle::Handle;
 use object::{Readable, Writable};
 use util::*;
 
@@ -51,7 +52,10 @@ impl PipeBuilder {
 
 
 
-object!(ReadPipe);
+#[derive(Debug)]
+pub struct ReadPipe(Handle);
+
+handle!(ReadPipe);
 
 impl Readable for ReadPipe {}
 
@@ -63,7 +67,10 @@ impl Read for ReadPipe {
 
 
 
-object!(WritePipe);
+#[derive(Debug)]
+pub struct WritePipe(Handle);
+
+handle!(WritePipe);
 
 impl Writable for WritePipe {}
 

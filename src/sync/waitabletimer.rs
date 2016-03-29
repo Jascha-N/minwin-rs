@@ -7,6 +7,7 @@ use winapi as w;
 
 use access::Access;
 use constants as c;
+use handle::Handle;
 use named::{CreateNamedResult, NamedBuilder, NamedObject, NamedOpenFunction};
 use string::WideString;
 use util::*;
@@ -102,7 +103,12 @@ impl DueTime {
     }
 }
 
-object!(WaitableTimer);
+
+
+#[derive(Debug)]
+pub struct WaitableTimer(Handle);
+
+handle!(WaitableTimer);
 
 access! { WaitableTimerAccess,
     ModifyState => c::TIMER_MODIFY_STATE,

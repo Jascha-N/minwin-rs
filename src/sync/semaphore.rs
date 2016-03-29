@@ -9,6 +9,7 @@ use winapi as w;
 
 use access::Access;
 use constants as c;
+use handle::Handle;
 use named::{CreateNamedResult, NamedBuilder, NamedObject, NamedOpenFunction};
 use string::WideString;
 use util::*;
@@ -79,7 +80,10 @@ impl NamedBuilder for SemaphoreBuilder {
 
 
 
-object!(Semaphore);
+#[derive(Debug)]
+pub struct Semaphore(Handle);
+
+handle!(Semaphore);
 
 access! { SemaphoreAccess,
     ModifyState => c::SEMAPHORE_MODIFY_STATE;

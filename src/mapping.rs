@@ -4,8 +4,9 @@ use std::ffi::OsStr;
 use std::os::windows::io::{AsRawHandle, FromRawHandle};
 use winapi as w;
 
-use string::WideString;
+use handle::Handle;
 use named::{CreateNamedResult, NamedBuilder, NamedObject, NamedOpenFunction};
+use string::WideString;
 use util::*;
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
@@ -130,7 +131,10 @@ impl<'a> NamedBuilder for FileMappingBuilder<'a> {
     }
 }
 
-object!(FileMapping);
+#[derive(Debug)]
+pub struct FileMapping(Handle);
+
+handle!(FileMapping);
 
 access! { FileMappingAccess,
     Read => w::FILE_MAP_READ,
