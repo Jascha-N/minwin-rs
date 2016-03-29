@@ -13,6 +13,7 @@ use util::*;
 
 
 
+/// An error used to indicate that a nul character was found in the input string.
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct NulError(usize, Vec<u16>);
 
@@ -47,13 +48,23 @@ impl From<NulError> for io::Error {
 }
 
 
-
+/// A type representing an owned wide string.
 pub type WideString = Vec<w::WCHAR>;
+
+/// Slice into an wide string.
 pub type WideStr = [w::WCHAR];
 
+/// Trait for converting a string into a `WideString`.
 pub trait ToWideString {
+    /// Converts a string into a `WideString` not including a final nul character.
     fn to_wide_string(&self) -> WideString;
 
+    /// Converts a string into a `WideString` including a final nul character.
+    ///
+    /// # Errors
+    ///
+    /// This function will return an error if an internal nul character has been
+    /// found.
     fn to_wide_string_null(&self) -> Result<WideString, NulError> {
         let mut wide = self.to_wide_string();
         if let Some(position) = wide.iter().position(|c| *c == 0) {
@@ -73,8 +84,10 @@ impl<T: ?Sized> ToWideString for T
 }
 
 
-
+/// A type representing an owned ANSI string encoded using the system default Windows ANSI code page.
 pub type AnsiString = Vec<w::CHAR>;
+
+/// Slice into an ANSI string.
 pub type AnsiStr = [w::CHAR];
 
 pub trait ToAnsiString {
@@ -82,13 +95,21 @@ pub trait ToAnsiString {
     fn to_ansi_string_null(&self) -> io::Result<AnsiString>;
 }
 
+/// Trait for converting a string into a `AnsiString`.
 impl<T: ?Sized> ToAnsiString for T
     where T: ToWideString
 {
+    /// Converts a string into a `AnsiString` not including a final nul character.
+    ///
+    /// May return an error if an unencodable character is encountered.
     fn to_ansi_string(&self) -> io::Result<AnsiString> {
         wide_to_ansi(self.to_wide_string())
     }
 
+    /// Converts a string into a `AnsiString` including a final nul character.
+    ///
+    /// May return an error if an unencodable character is encountered or the
+    /// string contains an internal nul character.
     fn to_ansi_string_null(&self) -> io::Result<AnsiString> {
         let result = try!(wide_to_ansi_null(try!(self.to_wide_string_null())));
         Ok(result)
@@ -113,20 +134,20 @@ fn wide_to_ansi_inner(wide: &WideStr, null_terminated: bool) -> io::Result<AnsiS
                                                                ptr::null(),
                                                                ptr::null_mut())));
 
-        let mut result = Vec::with_capacity(ansi_len as usize);
-        result.set_len(ansi_len as usize);
+        let mut ansi = Vec::with_capacity(ansi_len as usize);
+        ansi.set_len(ansi_len as usize);
 
         let ansi_len = try!(check_int(k32::WideCharToMultiByte(w::CP_ACP,
                                                                c::WC_ERR_INVALID_CHARS,
                                                                wide.as_ptr(),
                                                                wide_len,
-                                                               result.as_mut_ptr(),
+                                                               ansi.as_mut_ptr(),
                                                                ansi_len,
                                                                ptr::null(),
                                                                ptr::null_mut())));
 
-        result.set_len(ansi_len as usize);
-        Ok(result)
+        ansi.set_len(ansi_len as usize);
+        Ok(ansi)
     }
 }
 
@@ -154,18 +175,18 @@ fn ansi_to_wide_inner(ansi: &AnsiStr, null_terminated: bool) -> io::Result<WideS
                                                                ptr::null_mut(),
                                                                0)));
 
-        let mut result = Vec::with_capacity(wide_len as usize);
-        result.set_len(wide_len as usize);
+        let mut wide = Vec::with_capacity(wide_len as usize);
+        wide.set_len(wide_len as usize);
 
         let wide_len = try!(check_int(k32::MultiByteToWideChar(w::CP_ACP,
                                                                c::WC_ERR_INVALID_CHARS,
                                                                ansi.as_ptr(),
                                                                ansi_len,
-                                                               result.as_mut_ptr(),
+                                                               wide.as_mut_ptr(),
                                                                wide_len)));
 
-        result.set_len(wide_len as usize);
-        Ok(result)
+        wide.set_len(wide_len as usize);
+        Ok(wide)
     }
 }
 
