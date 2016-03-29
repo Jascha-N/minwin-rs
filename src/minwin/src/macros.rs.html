@@ -102,15 +102,9 @@
 <span id="59">59</span>
 <span id="60">60</span>
 <span id="61">61</span>
-<span id="62">62</span>
-<span id="63">63</span>
-<span id="64">64</span>
 </pre><pre class='rust '>
-<span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>object</span> {
+<span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>handle</span> {
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span>: <span class='ident'>ident</span>) <span class='op'>=&gt;</span> {
-        <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
-        <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>crate</span>::<span class='ident'>handle</span>::<span class='ident'>Handle</span>);
-
         <span class='kw'>impl</span> ::<span class='ident'>std</span>::<span class='ident'>os</span>::<span class='ident'>windows</span>::<span class='ident'>io</span>::<span class='ident'>FromRawHandle</span> <span class='kw'>for</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span> {
             <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>from_raw_handle</span>(<span class='ident'>handle</span>: ::<span class='ident'>std</span>::<span class='ident'>os</span>::<span class='ident'>windows</span>::<span class='ident'>io</span>::<span class='ident'>RawHandle</span>) <span class='op'>-&gt;</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span> {
                 <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>crate</span>::<span class='ident'>handle</span>::<span class='ident'>Handle</span>::<span class='ident'>from_raw_handle</span>(<span class='ident'>handle</span>))

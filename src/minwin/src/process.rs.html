@@ -46,10 +46,18 @@
 <span id="3">3</span>
 <span id="4">4</span>
 <span id="5">5</span>
+<span id="6">6</span>
+<span id="7">7</span>
+<span id="8">8</span>
+<span id="9">9</span>
 </pre><pre class='rust '>
+<span class='kw'>use</span> <span class='ident'>handle</span>::<span class='ident'>Handle</span>;
 <span class='kw'>use</span> <span class='ident'>waitable</span>::<span class='ident'>Waitable</span>;
 
-<span class='macro'>object</span><span class='macro'>!</span>(<span class='ident'>Process</span>);
+<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
+<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Process</span>(<span class='ident'>Handle</span>);
+
+<span class='macro'>handle</span><span class='macro'>!</span>(<span class='ident'>Process</span>);
 
 <span class='kw'>impl</span> <span class='ident'>Waitable</span> <span class='kw'>for</span> <span class='ident'>Process</span> {}
 </pre>

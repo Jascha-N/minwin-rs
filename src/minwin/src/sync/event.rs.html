@@ -180,6 +180,36 @@
 <span id="137">137</span>
 <span id="138">138</span>
 <span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
+<span id="161">161</span>
+<span id="162">162</span>
+<span id="163">163</span>
+<span id="164">164</span>
+<span id="165">165</span>
+<span id="166">166</span>
+<span id="167">167</span>
+<span id="168">168</span>
+<span id="169">169</span>
 </pre><pre class='rust '>
 <span class='kw'>use</span> <span class='ident'>kernel32</span> <span class='kw'>as</span> <span class='ident'>k32</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::{<span class='ident'>io</span>, <span class='ident'>ptr</span>};
@@ -189,6 +219,7 @@
 
 <span class='kw'>use</span> <span class='ident'>access</span>::<span class='ident'>Access</span>;
 <span class='kw'>use</span> <span class='ident'>constants</span> <span class='kw'>as</span> <span class='ident'>c</span>;
+<span class='kw'>use</span> <span class='ident'>handle</span>::<span class='ident'>Handle</span>;
 <span class='kw'>use</span> <span class='ident'>named</span>::{<span class='ident'>CreateNamedResult</span>, <span class='ident'>NamedBuilder</span>, <span class='ident'>NamedObject</span>, <span class='ident'>NamedOpenFunction</span>};
 <span class='kw'>use</span> <span class='ident'>string</span>::<span class='ident'>WideString</span>;
 <span class='kw'>use</span> <span class='ident'>util</span>::<span class='op'>*</span>;
@@ -196,6 +227,13 @@
 
 
 
+<span class='doccomment'>/// A builder for creating a new `Event`.</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// See [CreateEvent][CreateEvent] and [CreateEventEx][CreateEventEx] for more</span>
+<span class='doccomment'>/// information.</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// [CreateEvent]: https://msdn.microsoft.com/en-us/library/windows/desktop/ms682396%28v=vs.85%29.aspx</span>
+<span class='doccomment'>/// [CreateEventEx]: https://msdn.microsoft.com/en-us/library/windows/desktop/ms682400%28v=vs.85%29.aspx</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>EventBuilder</span> {
     <span class='ident'>security_attributes</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>w</span>::<span class='ident'>SECURITY_ATTRIBUTES</span><span class='op'>&gt;</span>,
     <span class='ident'>manual_reset</span>: <span class='ident'>bool</span>,
@@ -204,6 +242,7 @@
 }
 
 <span class='kw'>impl</span> <span class='ident'>EventBuilder</span> {
+    <span class='doccomment'>/// Creates a new event builder with the default settings.</span>
     <span class='attribute'>#[<span class='ident'>cfg_attr</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;clippy&quot;</span>, <span class='ident'>allow</span>(<span class='ident'>new_without_default</span>))]</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>() <span class='op'>-&gt;</span> <span class='ident'>EventBuilder</span> {
         <span class='ident'>EventBuilder</span> {
@@ -214,16 +253,24 @@
         }
     }
 
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>initial_state</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>signaled</span>: <span class='ident'>bool</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>EventBuilder</span> {
-        <span class='self'>self</span>.<span class='ident'>initial_state</span> <span class='op'>=</span> <span class='ident'>signaled</span>;
+    <span class='doccomment'>/// If the parameter is `true`, the builder creates a manual-reset event object,</span>
+    <span class='doccomment'>/// which requires the use of the `Event::reset()` function to set the event state to</span>
+    <span class='doccomment'>/// nonsignaled. If this parameter is `false`, the function creates an auto-reset event</span>
+    <span class='doccomment'>/// object, and system automatically resets the event state to nonsignaled after a single</span>
+    <span class='doccomment'>/// waiting thread has been released.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>manual_reset</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>manual_reset</span>: <span class='ident'>bool</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>EventBuilder</span> {
+        <span class='self'>self</span>.<span class='ident'>manual_reset</span> <span class='op'>=</span> <span class='ident'>manual_reset</span>;
         <span class='self'>self</span>
     }
 
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>manual_reset</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>manual</span>: <span class='ident'>bool</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>EventBuilder</span> {
-        <span class='self'>self</span>.<span class='ident'>manual_reset</span> <span class='op'>=</span> <span class='ident'>manual</span>;
+    <span class='doccomment'>/// If the parameter is `true`, the initial state of the event object is signaled;</span>
+    <span class='doccomment'>/// otherwise, it is nonsignaled.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>initial_state</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>initial_state</span>: <span class='ident'>bool</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>EventBuilder</span> {
+        <span class='self'>self</span>.<span class='ident'>initial_state</span> <span class='op'>=</span> <span class='ident'>initial_state</span>;
         <span class='self'>self</span>
     }
 
+    <span class='doccomment'>/// The desired access for the event object.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>desired_access</span><span class='op'>&lt;</span><span class='ident'>A</span>: <span class='ident'>Access</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>desired_access</span>: <span class='ident'>A</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>EventBuilder</span> {
         <span class='self'>self</span>.<span class='ident'>desired_access</span> <span class='op'>=</span> <span class='prelude-val'>Some</span>(<span class='ident'>desired_access</span>.<span class='ident'>mask</span>());
         <span class='self'>self</span>
@@ -281,8 +328,13 @@
 }
 
 
+<span class='doccomment'>/// A synchronization object whose state can be explicitly set to signaled.</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// See [Event Objects](https://msdn.microsoft.com/en-us/library/windows/desktop/ms682655%28v=vs.85%29.aspx).</span>
+<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
+<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Event</span>(<span class='ident'>Handle</span>);
 
-<span class='macro'>object</span><span class='macro'>!</span>(<span class='ident'>Event</span>);
+<span class='macro'>handle</span><span class='macro'>!</span>(<span class='ident'>Event</span>);
 
 <span class='macro'>access</span><span class='macro'>!</span> { <span class='ident'>EventAccess</span>,
     <span class='ident'>ModifyState</span> <span class='op'>=&gt;</span> <span class='ident'>c</span>::<span class='ident'>EVENT_MODIFY_STATE</span>;
@@ -291,20 +343,28 @@
 }
 
 <span class='kw'>impl</span> <span class='ident'>Event</span> {
+    <span class='doccomment'>/// Creates a new anonymous event with default settings.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>create</span>() <span class='op'>-&gt;</span> <span class='ident'>io</span>::<span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Event</span><span class='op'>&gt;</span> {
         <span class='ident'>EventBuilder</span>::<span class='ident'>new</span>().<span class='ident'>create</span>()
     }
 
+    <span class='doccomment'>/// Creates a new named event with default settings.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>create_named</span><span class='op'>&lt;</span><span class='ident'>N</span>: <span class='ident'>AsRef</span><span class='op'>&lt;</span><span class='ident'>OsStr</span><span class='op'>&gt;&gt;</span>(<span class='ident'>name</span>: <span class='ident'>N</span>) <span class='op'>-&gt;</span> <span class='ident'>CreateNamedResult</span><span class='op'>&lt;</span><span class='ident'>Event</span><span class='op'>&gt;</span> {
         <span class='ident'>EventBuilder</span>::<span class='ident'>new</span>().<span class='ident'>create_named</span>(<span class='ident'>name</span>)
     }
 
+    <span class='doccomment'>/// Sets the event object to the signaled state.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// See [SetEvent](https://msdn.microsoft.com/en-us/library/windows/desktop/ms686211%28v=vs.85%29.aspx).</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>set</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>io</span>::<span class='prelude-ty'>Result</span><span class='op'>&lt;</span>()<span class='op'>&gt;</span> {
         <span class='kw'>unsafe</span> {
             <span class='ident'>check_bool</span>(<span class='ident'>k32</span>::<span class='ident'>SetEvent</span>(<span class='self'>self</span>.<span class='ident'>as_raw_handle</span>()))
         }
     }
 
+    <span class='doccomment'>/// Sets the event object to the nonsignaled state.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// See [ResetEvent](https://msdn.microsoft.com/en-us/library/windows/desktop/ms685081%28v=vs.85%29.aspx).</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>reset</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>io</span>::<span class='prelude-ty'>Result</span><span class='op'>&lt;</span>()<span class='op'>&gt;</span> {
         <span class='kw'>unsafe</span> {
             <span class='ident'>check_bool</span>(<span class='ident'>k32</span>::<span class='ident'>ResetEvent</span>(<span class='self'>self</span>.<span class='ident'>as_raw_handle</span>()))

@@ -164,7 +164,7 @@
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>CreateNamedError</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
     <span class='ident'>AlreadyExists</span>(<span class='ident'>T</span>),
-    <span class='ident'>NulError</span>(<span class='ident'>NulError</span>),
+    <span class='ident'>InvalidName</span>(<span class='ident'>NulError</span>),
     <span class='ident'>Io</span>(<span class='ident'>io</span>::<span class='ident'>Error</span>),
 }
 
@@ -172,7 +172,7 @@
     <span class='kw'>fn</span> <span class='ident'>description</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='ident'>str</span> {
         <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
             <span class='ident'>CreateNamedError</span>::<span class='ident'>AlreadyExists</span>(_) <span class='op'>=&gt;</span> <span class='string'>&quot;named object already exists&quot;</span>,
-            <span class='ident'>CreateNamedError</span>::<span class='ident'>NulError</span>(_) <span class='op'>=&gt;</span> <span class='string'>&quot;nul in name&quot;</span>,
+            <span class='ident'>CreateNamedError</span>::<span class='ident'>InvalidName</span>(_) <span class='op'>=&gt;</span> <span class='string'>&quot;invalid name&quot;</span>,
             <span class='ident'>CreateNamedError</span>::<span class='ident'>Io</span>(_) <span class='op'>=&gt;</span> <span class='string'>&quot;I/O error&quot;</span>
         }
     }
@@ -182,7 +182,7 @@
     <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>formatter</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='ident'>fmt</span>::<span class='prelude-ty'>Result</span> {
         <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
             <span class='ident'>CreateNamedError</span>::<span class='ident'>AlreadyExists</span>(_) <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;Named object already exists&quot;</span>),
-            <span class='ident'>CreateNamedError</span>::<span class='ident'>NulError</span>(<span class='kw-2'>ref</span> <span class='ident'>error</span>) <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;{}&quot;</span>, <span class='ident'>error</span>),
+            <span class='ident'>CreateNamedError</span>::<span class='ident'>InvalidName</span>(<span class='kw-2'>ref</span> <span class='ident'>error</span>) <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;{}&quot;</span>, <span class='ident'>error</span>),
             <span class='ident'>CreateNamedError</span>::<span class='ident'>Io</span>(<span class='kw-2'>ref</span> <span class='ident'>error</span>) <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;An I/O error occurred: {}&quot;</span>, <span class='ident'>error</span>)
         }
     }
@@ -196,7 +196,7 @@
 
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> <span class='ident'>From</span><span class='op'>&lt;</span><span class='ident'>NulError</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>CreateNamedError</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
     <span class='kw'>fn</span> <span class='ident'>from</span>(<span class='ident'>error</span>: <span class='ident'>NulError</span>) <span class='op'>-&gt;</span> <span class='ident'>CreateNamedError</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
-        <span class='ident'>CreateNamedError</span>::<span class='ident'>NulError</span>(<span class='ident'>error</span>)
+        <span class='ident'>CreateNamedError</span>::<span class='ident'>InvalidName</span>(<span class='ident'>error</span>)
     }
 }
 

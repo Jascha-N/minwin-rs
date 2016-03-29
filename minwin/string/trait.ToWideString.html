@@ -46,18 +46,25 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-872' class='srclink' href='../../src/minwin/src/string.rs.html#54-65' title='goto source code'>[src]</a></span></h1>
+               </span><a id='src-875' class='srclink' href='../../src/minwin/src/string.rs.html#58-76' title='goto source code'>[src]</a></span></h1>
 <pre class='rust trait'>pub trait ToWideString {
     fn <a href='#tymethod.to_wide_string' class='fnname'>to_wide_string</a>(&amp;self) -&gt; <a class='type' href='../../minwin/string/type.WideString.html' title='minwin::string::WideString'>WideString</a>;
 
     fn <a href='#method.to_wide_string_null' class='fnname'>to_wide_string_null</a>(&amp;self) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='type' href='../../minwin/string/type.WideString.html' title='minwin::string::WideString'>WideString</a>, <a class='struct' href='../../minwin/string/struct.NulError.html' title='minwin::string::NulError'>NulError</a>&gt; { ... }
-}</pre>
+}</pre><div class='docblock'><p>Trait for converting a string into a <code>WideString</code>.</p>
+</div>
             <h2 id='required-methods'>Required Methods</h2>
             <div class='methods'>
-        <h3 id='tymethod.to_wide_string' class='method stab '><code>fn <a href='#tymethod.to_wide_string' class='fnname'>to_wide_string</a>(&amp;self) -&gt; <a class='type' href='../../minwin/string/type.WideString.html' title='minwin::string::WideString'>WideString</a></code></h3></div>
+        <h3 id='tymethod.to_wide_string' class='method stab '><code>fn <a href='#tymethod.to_wide_string' class='fnname'>to_wide_string</a>(&amp;self) -&gt; <a class='type' href='../../minwin/string/type.WideString.html' title='minwin::string::WideString'>WideString</a></code></h3><div class='docblock'><p>Converts a string into a <code>WideString</code> not including a final nul character.</p>
+</div></div>
             <h2 id='provided-methods'>Provided Methods</h2>
             <div class='methods'>
-        <h3 id='method.to_wide_string_null' class='method stab '><code>fn <a href='#method.to_wide_string_null' class='fnname'>to_wide_string_null</a>(&amp;self) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='type' href='../../minwin/string/type.WideString.html' title='minwin::string::WideString'>WideString</a>, <a class='struct' href='../../minwin/string/struct.NulError.html' title='minwin::string::NulError'>NulError</a>&gt;</code></h3></div>
+        <h3 id='method.to_wide_string_null' class='method stab '><code>fn <a href='#method.to_wide_string_null' class='fnname'>to_wide_string_null</a>(&amp;self) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='type' href='../../minwin/string/type.WideString.html' title='minwin::string::WideString'>WideString</a>, <a class='struct' href='../../minwin/string/struct.NulError.html' title='minwin::string::NulError'>NulError</a>&gt;</code></h3><div class='docblock'><p>Converts a string into a <code>WideString</code> including a final nul character.</p>
+
+<h1 id='errors' class='section-header'><a href='#errors'>Errors</a></h1>
+<p>This function will return an error if an internal nul character has been
+found.</p>
+</div></div>
         <h2 id='implementors'>Implementors</h2>
         <ul class='item-list' id='implementors-list'>
     </ul><script type="text/javascript" async

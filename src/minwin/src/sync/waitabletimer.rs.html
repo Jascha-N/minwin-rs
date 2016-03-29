@@ -226,6 +226,12 @@
 <span id="183">183</span>
 <span id="184">184</span>
 <span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
+<span id="191">191</span>
 </pre><pre class='rust '>
 <span class='kw'>use</span> <span class='ident'>kernel32</span> <span class='kw'>as</span> <span class='ident'>k32</span>;
 <span class='kw'>use</span> <span class='ident'>chrono</span>::{<span class='ident'>DateTime</span>, <span class='ident'>Duration</span>, <span class='ident'>NaiveDate</span>, <span class='ident'>TimeZone</span>, <span class='ident'>UTC</span>};
@@ -236,6 +242,7 @@
 
 <span class='kw'>use</span> <span class='ident'>access</span>::<span class='ident'>Access</span>;
 <span class='kw'>use</span> <span class='ident'>constants</span> <span class='kw'>as</span> <span class='ident'>c</span>;
+<span class='kw'>use</span> <span class='ident'>handle</span>::<span class='ident'>Handle</span>;
 <span class='kw'>use</span> <span class='ident'>named</span>::{<span class='ident'>CreateNamedResult</span>, <span class='ident'>NamedBuilder</span>, <span class='ident'>NamedObject</span>, <span class='ident'>NamedOpenFunction</span>};
 <span class='kw'>use</span> <span class='ident'>string</span>::<span class='ident'>WideString</span>;
 <span class='kw'>use</span> <span class='ident'>util</span>::<span class='op'>*</span>;
@@ -331,7 +338,12 @@
     }
 }
 
-<span class='macro'>object</span><span class='macro'>!</span>(<span class='ident'>WaitableTimer</span>);
+
+
+<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
+<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>WaitableTimer</span>(<span class='ident'>Handle</span>);
+
+<span class='macro'>handle</span><span class='macro'>!</span>(<span class='ident'>WaitableTimer</span>);
 
 <span class='macro'>access</span><span class='macro'>!</span> { <span class='ident'>WaitableTimerAccess</span>,
     <span class='ident'>ModifyState</span> <span class='op'>=&gt;</span> <span class='ident'>c</span>::<span class='ident'>TIMER_MODIFY_STATE</span>,
