@@ -13,7 +13,7 @@ use util::*;
 #[derive(Debug)]
 pub enum CreateNamedError<T> {
     AlreadyExists(T),
-    NulError(NulError),
+    InvalidName(NulError),
     Io(io::Error),
 }
 
@@ -21,7 +21,7 @@ impl<T: Debug + Any> Error for CreateNamedError<T> {
     fn description(&self) -> &str {
         match *self {
             CreateNamedError::AlreadyExists(_) => "named object already exists",
-            CreateNamedError::NulError(_) => "nul in name",
+            CreateNamedError::InvalidName(_) => "invalid name",
             CreateNamedError::Io(_) => "I/O error"
         }
     }
@@ -31,7 +31,7 @@ impl<T> Display for CreateNamedError<T> {
     fn fmt(&self, formatter: &mut Formatter) -> fmt::Result {
         match *self {
             CreateNamedError::AlreadyExists(_) => write!(formatter, "Named object already exists"),
-            CreateNamedError::NulError(ref error) => write!(formatter, "{}", error),
+            CreateNamedError::InvalidName(ref error) => write!(formatter, "{}", error),
             CreateNamedError::Io(ref error) => write!(formatter, "An I/O error occurred: {}", error)
         }
     }
@@ -45,7 +45,7 @@ impl<T> From<io::Error> for CreateNamedError<T> {
 
 impl<T> From<NulError> for CreateNamedError<T> {
     fn from(error: NulError) -> CreateNamedError<T> {
-        CreateNamedError::NulError(error)
+        CreateNamedError::InvalidName(error)
     }
 }
 
