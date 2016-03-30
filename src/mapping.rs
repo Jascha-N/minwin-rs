@@ -282,6 +282,10 @@ impl FileView {
         slice::from_raw_parts_mut(self.address, self.size)
     }
 
+    pub fn size(&self) -> usize {
+        self.size
+    }
+
     pub fn flush_range(&self, offset: Option<usize>, size: Option<usize>) -> io::Result<()> {
         unsafe {
             check_bool(k32::FlushViewOfFile(self.address.offset(offset.unwrap_or(0) as isize) as w::LPCVOID,
