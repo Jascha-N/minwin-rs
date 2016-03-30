@@ -175,7 +175,14 @@ impl Error for TryAcquireError {
     fn description(&self) -> &str {
         match *self {
             TryAcquireError::WouldBlock => "operation would block",
-            TryAcquireError::Io(_) => "I/O error"
+            TryAcquireError::Io(ref error) => error.description()
+        }
+    }
+
+    fn cause(&self) -> Option<&Error> {
+        match *self {
+            TryAcquireError::Io(ref error) => Some(error),
+            _ => None
         }
     }
 }

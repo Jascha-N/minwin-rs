@@ -23,8 +23,16 @@ impl<T: Debug + Any> Error for CreateNamedError<T> {
     fn description(&self) -> &str {
         match *self {
             CreateNamedError::AlreadyExists(_) => "named object already exists",
-            CreateNamedError::InvalidName(_) => "invalid name",
-            CreateNamedError::Io(_) => "I/O error"
+            CreateNamedError::InvalidName(ref error) => error.description(),
+            CreateNamedError::Io(ref error) => error.description()
+        }
+    }
+
+    fn cause(&self) -> Option<&Error> {
+        match *self {
+            CreateNamedError::InvalidName(ref error) => Some(error),
+            CreateNamedError::Io(ref error) => Some(error),
+            _ => None
         }
     }
 }

@@ -170,7 +170,14 @@ impl<'a> Error for LockError<'a> {
     fn description(&self) -> &str {
         match *self {
             LockError::Abandoned(_) => "abandoned mutex",
-            LockError::Io(_) => "I/O error"
+            LockError::Io(ref error) => error.description()
+        }
+    }
+
+    fn cause(&self) -> Option<&Error> {
+        match *self {
+            LockError::Io(ref error) => Some(error),
+            _ => None
         }
     }
 }
@@ -198,7 +205,14 @@ impl<'a> Error for TryLockError<'a> {
         match *self {
             TryLockError::Abandoned(_) => "abandoned mutex",
             TryLockError::WouldBlock => "operation would block",
-            TryLockError::Io(_) => "I/O error"
+            TryLockError::Io(ref error) => error.description()
+        }
+    }
+
+    fn cause(&self) -> Option<&Error> {
+        match *self {
+            TryLockError::Io(ref error) => Some(error),
+            _ => None
         }
     }
 }
