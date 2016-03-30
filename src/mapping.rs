@@ -5,7 +5,7 @@ use std::os::windows::io::{AsRawHandle, FromRawHandle};
 use winapi as w;
 
 use handle::Handle;
-use named::{CreateNamedResult, NamedBuilder, NamedObject, NamedOpenFunction};
+use named::{CreateNamedResult, NamedBuilder, NamedObject, NamedOpenFunction, NamedOpenOptions};
 use string::WideString;
 use util::*;
 
@@ -183,9 +183,12 @@ impl FileMapping {
 }
 
 impl NamedObject for FileMapping {
-    #[doc(hidden)]
-    fn __open_function() -> NamedOpenFunction {
+    fn open_function() -> NamedOpenFunction {
         k32::OpenFileMappingW
+    }
+
+    fn default_open_options() -> NamedOpenOptions {
+        FileMappingAccess::all().into()
     }
 }
 

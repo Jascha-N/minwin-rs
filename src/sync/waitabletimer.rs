@@ -8,7 +8,7 @@ use winapi as w;
 use access::Access;
 use constants as c;
 use handle::Handle;
-use named::{CreateNamedResult, NamedBuilder, NamedObject, NamedOpenFunction};
+use named::{CreateNamedResult, NamedBuilder, NamedObject, NamedOpenFunction, NamedOpenOptions};
 use string::WideString;
 use util::*;
 use waitable::Waitable;
@@ -182,9 +182,12 @@ fn filetime_as_time<Tz: TimeZone>(file_time: i64, offset: Tz::Offset) -> DateTim
 }
 
 impl NamedObject for WaitableTimer {
-    #[doc(hidden)]
-    fn __open_function() -> NamedOpenFunction {
+    fn open_function() -> NamedOpenFunction {
         k32::OpenWaitableTimerW
+    }
+
+    fn default_open_options() -> NamedOpenOptions {
+        WaitableTimerAccess::all().into()
     }
 }
 

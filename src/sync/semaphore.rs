@@ -10,7 +10,7 @@ use winapi as w;
 use access::Access;
 use constants as c;
 use handle::Handle;
-use named::{CreateNamedResult, NamedBuilder, NamedObject, NamedOpenFunction};
+use named::{CreateNamedResult, NamedBuilder, NamedObject, NamedOpenFunction, NamedOpenOptions};
 use string::WideString;
 use util::*;
 use waitable::{Waitable, WaitError};
@@ -138,9 +138,12 @@ impl Semaphore {
 }
 
 impl NamedObject for Semaphore {
-    #[doc(hidden)]
-    fn __open_function() -> NamedOpenFunction {
+    fn open_function() -> NamedOpenFunction {
         k32::OpenSemaphoreW
+    }
+
+    fn default_open_options() -> NamedOpenOptions {
+        SemaphoreAccess::all().into()
     }
 }
 

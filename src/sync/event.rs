@@ -7,7 +7,7 @@ use winapi as w;
 use access::Access;
 use constants as c;
 use handle::Handle;
-use named::{CreateNamedResult, NamedBuilder, NamedObject, NamedOpenFunction};
+use named::{CreateNamedResult, NamedBuilder, NamedObject, NamedOpenFunction, NamedOpenOptions};
 use string::WideString;
 use util::*;
 use waitable::Waitable;
@@ -40,6 +40,8 @@ impl EventBuilder {
         }
     }
 
+    /// The reset mode of the event.
+    ///
     /// If the parameter is `true`, the builder creates a manual-reset event object,
     /// which requires the use of the `Event::reset()` function to set the event state to
     /// nonsignaled. If this parameter is `false`, the function creates an auto-reset event
@@ -50,6 +52,8 @@ impl EventBuilder {
         self
     }
 
+    /// The initial state of the event.
+    ///
     /// If the parameter is `true`, the initial state of the event object is signaled;
     /// otherwise, it is nonsignaled.
     pub fn initial_state(&mut self, initial_state: bool) -> &mut EventBuilder {
@@ -160,9 +164,12 @@ impl Event {
 }
 
 impl NamedObject for Event {
-    #[doc(hidden)]
-    fn __open_function() -> NamedOpenFunction {
+    fn open_function() -> NamedOpenFunction {
         k32::OpenEventW
+    }
+
+    fn default_open_options() -> NamedOpenOptions {
+        EventAccess::all().into()
     }
 }
 

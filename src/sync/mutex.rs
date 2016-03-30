@@ -11,7 +11,7 @@ use winapi as w;
 use access::Access;
 use constants as c;
 use handle::Handle;
-use named::{CreateNamedResult, NamedBuilder, NamedObject, NamedOpenFunction};
+use named::{CreateNamedResult, NamedBuilder, NamedObject, NamedOpenFunction, NamedOpenOptions};
 use string::WideString;
 use util::*;
 use waitable::{Waitable, WaitError};
@@ -133,9 +133,12 @@ impl Mutex {
 }
 
 impl NamedObject for Mutex {
-    #[doc(hidden)]
-    fn __open_function() -> NamedOpenFunction {
+    fn open_function() -> NamedOpenFunction {
         k32::OpenMutexW
+    }
+
+    fn default_open_options() -> NamedOpenOptions {
+        MutexAccess::all().into()
     }
 }
 

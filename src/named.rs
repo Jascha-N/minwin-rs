@@ -10,6 +10,8 @@ use object::ObjectExt;
 use string::{ToWideString, WideString, NulError};
 use util::*;
 
+
+
 #[derive(Debug)]
 pub enum CreateNamedError<T> {
     AlreadyExists(T),
@@ -62,17 +64,22 @@ impl<T> CreateNamedError<T> {
     }
 }
 
+
+
+/// A trait containing common methods for creating named objects.
 pub trait NamedBuilder {
     type Output: NamedObject;
 
     #[doc(hidden)]
     fn __create_inner(&self, name: Option<WideString>) -> io::Result<(Self::Output, bool)>;
 
+    /// Creates a new anonymous object.
     fn create(&self) -> io::Result<Self::Output> {
         let (result, _) = try!(self.__create_inner(None));
         Ok(result)
     }
 
+    /// Creates a new named object or opens an existing object.
     fn create_named<N: AsRef<OsStr>>(&self, name: N) -> CreateNamedResult<Self::Output> {
         let (result, created) = try!(self.__create_inner(Some(try!(name.to_wide_string_null()))));
         if created {
@@ -83,25 +90,85 @@ pub trait NamedBuilder {
     }
 }
 
+
+
+/// Windows API function type used for opening named objects.
+///
+/// Used internally by `NamedObject`s.
 pub type NamedOpenFunction = unsafe extern "system" fn(w::DWORD, w::BOOL, w::LPCWSTR) -> w::HANDLE;
 
-pub trait NamedObject: ObjectExt {
-    #[doc(hidden)]
-    fn __open_function() -> NamedOpenFunction;
 
-    fn open_named<N: AsRef<OsStr>>(name: N) -> io::Result<Self> {
-        Self::open_named_with_access(name, MaximumAccess)
+
+/// A type that can be constructed given an existing object name.
+pub trait NamedObject: ObjectExt {
+    /// The extern function used for opening an object of this type.
+    fn open_function() -> NamedOpenFunction;
+
+    /// The default opening options for this type.
+    fn default_open_options() -> NamedOpenOptions;
+
+    /// Opens a named object using default options.
+    fn open<N: AsRef<OsStr>>(name: N) -> io::Result<Self> {
+        Self::open_with_options(name, Self::default_open_options())
     }
 
-    fn open_named_with_access<N: AsRef<OsStr>, A: Access>(name: N,
-                                                          desired_access: A)
-                                                          -> io::Result<Self> {
+    /// Opens a named object using the specified options.
+    fn open_with_options<N, O>(name: N, options: O) -> io::Result<Self>
+        where N: AsRef<OsStr>,
+              O: Into<NamedOpenOptions>
+    {
         let name = try!(name.to_wide_string_null());
+        let options = options.into();
+        let inherit = if options.inheritable {
+            w::TRUE
+        } else {
+            w::FALSE
+        };
+
         unsafe {
-            let handle = try!(check_handle(Self::__open_function()(desired_access.mask(),
-                                                                   w::FALSE,
-                                                                   name.as_ptr())));
+            let handle = try!(check_handle(Self::open_function()(options.desired_access,
+                                                                 inherit,
+                                                                 name.as_ptr())));
             Ok(Self::from_raw_handle(handle))
         }
+    }
+}
+
+
+
+/// Options for opening a named object.
+#[derive(Debug)]
+pub struct NamedOpenOptions {
+    inheritable: bool,
+    desired_access: u32
+}
+
+impl NamedOpenOptions {
+    pub fn new() -> NamedOpenOptions {
+        NamedOpenOptions {
+            inheritable: false,
+            desired_access: MaximumAccess.mask()
+        }
+    }
+
+    /// Indicates whether the underlying handle can be inherited.
+    ///
+    /// If the parameter is `true`, processes created by this process will inherit the handle.
+    /// Otherwise, the processes do not inherit this handle.
+    pub fn inheritable(mut self, inheritable: bool) -> Self {
+        self.inheritable = inheritable;
+        self
+    }
+
+    /// The desired access for the object.
+    pub fn desired_access<A: Access>(mut self, desired_access: A) -> Self {
+        self.desired_access = desired_access.mask();
+        self
+    }
+}
+
+impl<A: Access> From<A> for NamedOpenOptions {
+    fn from(access: A) -> NamedOpenOptions {
+        NamedOpenOptions::new().desired_access(access)
     }
 }
