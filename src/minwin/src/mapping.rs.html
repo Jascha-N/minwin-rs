@@ -344,6 +344,13 @@
 <span id="301">301</span>
 <span id="302">302</span>
 <span id="303">303</span>
+<span id="304">304</span>
+<span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
+<span id="308">308</span>
+<span id="309">309</span>
+<span id="310">310</span>
 </pre><pre class='rust '>
 <span class='kw'>use</span> <span class='ident'>kernel32</span> <span class='kw'>as</span> <span class='ident'>k32</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::{<span class='ident'>io</span>, <span class='ident'>mem</span>, <span class='ident'>ptr</span>, <span class='ident'>slice</span>};
@@ -352,7 +359,7 @@
 <span class='kw'>use</span> <span class='ident'>winapi</span> <span class='kw'>as</span> <span class='ident'>w</span>;
 
 <span class='kw'>use</span> <span class='ident'>handle</span>::<span class='ident'>Handle</span>;
-<span class='kw'>use</span> <span class='ident'>named</span>::{<span class='ident'>CreateNamedResult</span>, <span class='ident'>NamedBuilder</span>, <span class='ident'>NamedObject</span>, <span class='ident'>NamedOpenFunction</span>};
+<span class='kw'>use</span> <span class='ident'>named</span>::{<span class='ident'>CreateNamedResult</span>, <span class='ident'>NamedBuilder</span>, <span class='ident'>NamedObject</span>, <span class='ident'>NamedOpenFunction</span>, <span class='ident'>NamedOpenOptions</span>};
 <span class='kw'>use</span> <span class='ident'>string</span>::<span class='ident'>WideString</span>;
 <span class='kw'>use</span> <span class='ident'>util</span>::<span class='op'>*</span>;
 
@@ -530,9 +537,12 @@
 }
 
 <span class='kw'>impl</span> <span class='ident'>NamedObject</span> <span class='kw'>for</span> <span class='ident'>FileMapping</span> {
-    <span class='attribute'>#[<span class='ident'>doc</span>(<span class='ident'>hidden</span>)]</span>
-    <span class='kw'>fn</span> <span class='ident'>__open_function</span>() <span class='op'>-&gt;</span> <span class='ident'>NamedOpenFunction</span> {
+    <span class='kw'>fn</span> <span class='ident'>open_function</span>() <span class='op'>-&gt;</span> <span class='ident'>NamedOpenFunction</span> {
         <span class='ident'>k32</span>::<span class='ident'>OpenFileMappingW</span>
+    }
+
+    <span class='kw'>fn</span> <span class='ident'>default_open_options</span>() <span class='op'>-&gt;</span> <span class='ident'>NamedOpenOptions</span> {
+        <span class='ident'>FileMappingAccess</span>::<span class='ident'>all</span>().<span class='ident'>into</span>()
     }
 }
 
@@ -624,6 +634,10 @@
 
     <span class='kw'>pub</span> <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>as_mut_slice</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> [<span class='ident'>u8</span>] {
         <span class='ident'>slice</span>::<span class='ident'>from_raw_parts_mut</span>(<span class='self'>self</span>.<span class='ident'>address</span>, <span class='self'>self</span>.<span class='ident'>size</span>)
+    }
+
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>size</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> {
+        <span class='self'>self</span>.<span class='ident'>size</span>
     }
 
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>flush_range</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>offset</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>usize</span><span class='op'>&gt;</span>, <span class='ident'>size</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>usize</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>io</span>::<span class='prelude-ty'>Result</span><span class='op'>&lt;</span>()<span class='op'>&gt;</span> {

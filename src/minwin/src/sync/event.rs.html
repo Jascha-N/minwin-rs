@@ -210,6 +210,13 @@
 <span id="167">167</span>
 <span id="168">168</span>
 <span id="169">169</span>
+<span id="170">170</span>
+<span id="171">171</span>
+<span id="172">172</span>
+<span id="173">173</span>
+<span id="174">174</span>
+<span id="175">175</span>
+<span id="176">176</span>
 </pre><pre class='rust '>
 <span class='kw'>use</span> <span class='ident'>kernel32</span> <span class='kw'>as</span> <span class='ident'>k32</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::{<span class='ident'>io</span>, <span class='ident'>ptr</span>};
@@ -220,7 +227,7 @@
 <span class='kw'>use</span> <span class='ident'>access</span>::<span class='ident'>Access</span>;
 <span class='kw'>use</span> <span class='ident'>constants</span> <span class='kw'>as</span> <span class='ident'>c</span>;
 <span class='kw'>use</span> <span class='ident'>handle</span>::<span class='ident'>Handle</span>;
-<span class='kw'>use</span> <span class='ident'>named</span>::{<span class='ident'>CreateNamedResult</span>, <span class='ident'>NamedBuilder</span>, <span class='ident'>NamedObject</span>, <span class='ident'>NamedOpenFunction</span>};
+<span class='kw'>use</span> <span class='ident'>named</span>::{<span class='ident'>CreateNamedResult</span>, <span class='ident'>NamedBuilder</span>, <span class='ident'>NamedObject</span>, <span class='ident'>NamedOpenFunction</span>, <span class='ident'>NamedOpenOptions</span>};
 <span class='kw'>use</span> <span class='ident'>string</span>::<span class='ident'>WideString</span>;
 <span class='kw'>use</span> <span class='ident'>util</span>::<span class='op'>*</span>;
 <span class='kw'>use</span> <span class='ident'>waitable</span>::<span class='ident'>Waitable</span>;
@@ -253,6 +260,8 @@
         }
     }
 
+    <span class='doccomment'>/// The reset mode of the event.</span>
+    <span class='doccomment'>///</span>
     <span class='doccomment'>/// If the parameter is `true`, the builder creates a manual-reset event object,</span>
     <span class='doccomment'>/// which requires the use of the `Event::reset()` function to set the event state to</span>
     <span class='doccomment'>/// nonsignaled. If this parameter is `false`, the function creates an auto-reset event</span>
@@ -263,6 +272,8 @@
         <span class='self'>self</span>
     }
 
+    <span class='doccomment'>/// The initial state of the event.</span>
+    <span class='doccomment'>///</span>
     <span class='doccomment'>/// If the parameter is `true`, the initial state of the event object is signaled;</span>
     <span class='doccomment'>/// otherwise, it is nonsignaled.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>initial_state</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>initial_state</span>: <span class='ident'>bool</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>EventBuilder</span> {
@@ -373,9 +384,12 @@
 }
 
 <span class='kw'>impl</span> <span class='ident'>NamedObject</span> <span class='kw'>for</span> <span class='ident'>Event</span> {
-    <span class='attribute'>#[<span class='ident'>doc</span>(<span class='ident'>hidden</span>)]</span>
-    <span class='kw'>fn</span> <span class='ident'>__open_function</span>() <span class='op'>-&gt;</span> <span class='ident'>NamedOpenFunction</span> {
+    <span class='kw'>fn</span> <span class='ident'>open_function</span>() <span class='op'>-&gt;</span> <span class='ident'>NamedOpenFunction</span> {
         <span class='ident'>k32</span>::<span class='ident'>OpenEventW</span>
+    }
+
+    <span class='kw'>fn</span> <span class='ident'>default_open_options</span>() <span class='op'>-&gt;</span> <span class='ident'>NamedOpenOptions</span> {
+        <span class='ident'>EventAccess</span>::<span class='ident'>all</span>().<span class='ident'>into</span>()
     }
 }
 

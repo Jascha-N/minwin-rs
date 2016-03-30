@@ -46,7 +46,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-960' class='srclink' href='../../src/minwin/src/sync/event.rs.html#24-29' title='goto source code'>[src]</a></span></h1>
+               </span><a id='src-995' class='srclink' href='../../src/minwin/src/sync/event.rs.html#24-29' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct EventBuilder {
     // some fields omitted
 }</pre><div class='docblock'><p>A builder for creating a new <code>Event</code>.</p>
@@ -56,13 +56,17 @@ information.</p>
 </div><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../../minwin/sync/struct.EventBuilder.html' title='minwin::sync::EventBuilder'>EventBuilder</a></code></h3><div class='impl-items'><h4 id='method.new' class='method'><code>fn <a href='#method.new' class='fnname'>new</a>() -&gt; <a class='struct' href='../../minwin/sync/struct.EventBuilder.html' title='minwin::sync::EventBuilder'>EventBuilder</a></code></h4>
 <div class='docblock'><p>Creates a new event builder with the default settings.</p>
 </div><h4 id='method.manual_reset' class='method'><code>fn <a href='#method.manual_reset' class='fnname'>manual_reset</a>(&amp;mut self, manual_reset: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; &amp;mut <a class='struct' href='../../minwin/sync/struct.EventBuilder.html' title='minwin::sync::EventBuilder'>EventBuilder</a></code></h4>
-<div class='docblock'><p>If the parameter is <code>true</code>, the builder creates a manual-reset event object,
+<div class='docblock'><p>The reset mode of the event.</p>
+
+<p>If the parameter is <code>true</code>, the builder creates a manual-reset event object,
 which requires the use of the <code>Event::reset()</code> function to set the event state to
 nonsignaled. If this parameter is <code>false</code>, the function creates an auto-reset event
 object, and system automatically resets the event state to nonsignaled after a single
 waiting thread has been released.</p>
 </div><h4 id='method.initial_state' class='method'><code>fn <a href='#method.initial_state' class='fnname'>initial_state</a>(&amp;mut self, initial_state: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; &amp;mut <a class='struct' href='../../minwin/sync/struct.EventBuilder.html' title='minwin::sync::EventBuilder'>EventBuilder</a></code></h4>
-<div class='docblock'><p>If the parameter is <code>true</code>, the initial state of the event object is signaled;
+<div class='docblock'><p>The initial state of the event.</p>
+
+<p>If the parameter is <code>true</code>, the initial state of the event object is signaled;
 otherwise, it is nonsignaled.</p>
 </div><h4 id='method.desired_access' class='method'><code>fn <a href='#method.desired_access' class='fnname'>desired_access</a>&lt;A: <a class='trait' href='../../minwin/access/trait.Access.html' title='minwin::access::Access'>Access</a>&gt;(&amp;mut self, desired_access: A) -&gt; &amp;mut <a class='struct' href='../../minwin/sync/struct.EventBuilder.html' title='minwin::sync::EventBuilder'>EventBuilder</a></code></h4>
 <div class='docblock'><p>The desired access for the event object.</p>

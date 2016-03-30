@@ -46,18 +46,21 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-301' class='srclink' href='../../src/minwin/src/named.rs.html#65-84' title='goto source code'>[src]</a></span></h1>
+               </span><a id='src-307' class='srclink' href='../../src/minwin/src/named.rs.html#78-99' title='goto source code'>[src]</a></span></h1>
 <pre class='rust trait'>pub trait NamedBuilder {
     type Output: <a class='trait' href='../../minwin/named/trait.NamedObject.html' title='minwin::named::NamedObject'>NamedObject</a>;
     fn <a href='#method.create' class='fnname'>create</a>(&amp;self) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/std/io/error/type.Result.html' title='std::io::error::Result'>Result</a>&lt;Self::<a class='trait' href='../../minwin/named/trait.NamedBuilder.html' title='minwin::named::NamedBuilder'>Output</a>&gt; { ... }
     fn <a href='#method.create_named' class='fnname'>create_named</a>&lt;N: <a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.AsRef.html' title='core::convert::AsRef'>AsRef</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/std/ffi/os_str/struct.OsStr.html' title='std::ffi::os_str::OsStr'>OsStr</a>&gt;&gt;(&amp;self, name: N) -&gt; <a class='type' href='../../minwin/named/type.CreateNamedResult.html' title='minwin::named::CreateNamedResult'>CreateNamedResult</a>&lt;Self::<a class='trait' href='../../minwin/named/trait.NamedBuilder.html' title='minwin::named::NamedBuilder'>Output</a>&gt; { ... }
-}</pre>
+}</pre><div class='docblock'><p>A trait containing common methods for creating named objects.</p>
+</div>
             <h2 id='associated-types'>Associated Types</h2>
             <div class='methods'>
         <h3 id='associatedtype.Output' class='method stab '><code>type Output: <a class='trait' href='../../minwin/named/trait.NamedObject.html' title='minwin::named::NamedObject'>NamedObject</a></code></h3></div>
             <h2 id='provided-methods'>Provided Methods</h2>
             <div class='methods'>
-        <h3 id='method.create' class='method stab '><code>fn <a href='#method.create' class='fnname'>create</a>(&amp;self) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/std/io/error/type.Result.html' title='std::io::error::Result'>Result</a>&lt;Self::<a class='trait' href='../../minwin/named/trait.NamedBuilder.html' title='minwin::named::NamedBuilder'>Output</a>&gt;</code></h3><h3 id='method.create_named' class='method stab '><code>fn <a href='#method.create_named' class='fnname'>create_named</a>&lt;N: <a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.AsRef.html' title='core::convert::AsRef'>AsRef</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/std/ffi/os_str/struct.OsStr.html' title='std::ffi::os_str::OsStr'>OsStr</a>&gt;&gt;(&amp;self, name: N) -&gt; <a class='type' href='../../minwin/named/type.CreateNamedResult.html' title='minwin::named::CreateNamedResult'>CreateNamedResult</a>&lt;Self::<a class='trait' href='../../minwin/named/trait.NamedBuilder.html' title='minwin::named::NamedBuilder'>Output</a>&gt;</code></h3></div>
+        <h3 id='method.create' class='method stab '><code>fn <a href='#method.create' class='fnname'>create</a>(&amp;self) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/std/io/error/type.Result.html' title='std::io::error::Result'>Result</a>&lt;Self::<a class='trait' href='../../minwin/named/trait.NamedBuilder.html' title='minwin::named::NamedBuilder'>Output</a>&gt;</code></h3><div class='docblock'><p>Creates a new anonymous object.</p>
+</div><h3 id='method.create_named' class='method stab '><code>fn <a href='#method.create_named' class='fnname'>create_named</a>&lt;N: <a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.AsRef.html' title='core::convert::AsRef'>AsRef</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/std/ffi/os_str/struct.OsStr.html' title='std::ffi::os_str::OsStr'>OsStr</a>&gt;&gt;(&amp;self, name: N) -&gt; <a class='type' href='../../minwin/named/type.CreateNamedResult.html' title='minwin::named::CreateNamedResult'>CreateNamedResult</a>&lt;Self::<a class='trait' href='../../minwin/named/trait.NamedBuilder.html' title='minwin::named::NamedBuilder'>Output</a>&gt;</code></h3><div class='docblock'><p>Creates a new named object or opens an existing object.</p>
+</div></div>
         <h2 id='implementors'>Implementors</h2>
         <ul class='item-list' id='implementors-list'>
     <li><code>impl&lt;'a&gt; <a class='trait' href='../../minwin/named/trait.NamedBuilder.html' title='minwin::named::NamedBuilder'>NamedBuilder</a> for <a class='struct' href='../../minwin/mapping/struct.FileMappingBuilder.html' title='minwin::mapping::FileMappingBuilder'>FileMappingBuilder</a>&lt;'a&gt;</code></li>
