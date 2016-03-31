@@ -17,7 +17,7 @@ impl Overlapped {
     pub fn new() -> Overlapped {
         Overlapped {
             inner: unsafe { mem::zeroed() },
-            event: None
+            event: None,
         }
     }
 

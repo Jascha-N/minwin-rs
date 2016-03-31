@@ -28,7 +28,7 @@ pub trait Object: AsRawHandle {
 pub trait ObjectExt: Object + FromRawHandle + IntoRawHandle + Sized {
     fn try_clone(&self) -> io::Result<Self> {
         handle::duplicate(self.as_raw_handle())
-               .map(|handle| unsafe { Self::from_raw_handle(handle) })
+            .map(|handle| unsafe { Self::from_raw_handle(handle) })
     }
 
     unsafe fn from_handle(handle: Handle) -> Self {
@@ -51,17 +51,28 @@ pub trait Readable: Object {
     fn read(&self, buffer: &mut [u8]) -> io::Result<u32> {
         unsafe {
             let mut read = mem::uninitialized();
-            let size = cmp::min(mem::size_of_val(&buffer[..]), w::DWORD::max_value() as usize) as w::DWORD;
-            try!(check_bool(k32::ReadFile(self.as_raw_handle(), buffer.as_mut_ptr() as w::LPVOID, size,
-                                          &mut read, ptr::null_mut())));
+            let size = cmp::min(mem::size_of_val(&buffer[..]),
+                                w::DWORD::max_value() as usize) as w::DWORD;
+            try!(check_bool(k32::ReadFile(self.as_raw_handle(),
+                                          buffer.as_mut_ptr() as w::LPVOID,
+                                          size,
+                                          &mut read,
+                                          ptr::null_mut())));
             Ok(read)
         }
     }
 
-    unsafe fn read_overlapped(&self, buffer: &mut [u8], overlapped: &mut Overlapped) -> io::Result<bool> {
-        let size = cmp::min(mem::size_of_val(&buffer[..]), w::DWORD::max_value() as usize) as w::DWORD;
-        let result = check_bool(k32::ReadFile(self.as_raw_handle(), buffer.as_mut_ptr() as w::LPVOID, size,
-                                              ptr::null_mut(), overlapped.get()));
+    unsafe fn read_overlapped(&self,
+                              buffer: &mut [u8],
+                              overlapped: &mut Overlapped)
+                              -> io::Result<bool> {
+        let size = cmp::min(mem::size_of_val(&buffer[..]),
+                            w::DWORD::max_value() as usize) as w::DWORD;
+        let result = check_bool(k32::ReadFile(self.as_raw_handle(),
+                                              buffer.as_mut_ptr() as w::LPVOID,
+                                              size,
+                                              ptr::null_mut(),
+                                              overlapped.get()));
         match result {
             Ok(_) => Ok(true),
             Err(ref error) if error.raw_os_error() == Some(w::ERROR_IO_PENDING as i32) => Ok(false),
@@ -74,17 +85,28 @@ pub trait Writable: Object {
     fn write(&self, buffer: &[u8]) -> io::Result<u32> {
         unsafe {
             let mut written = mem::uninitialized();
-            let size = cmp::min(mem::size_of_val(&buffer[..]), w::DWORD::max_value() as usize) as w::DWORD;
-            try!(check_bool(k32::WriteFile(self.as_raw_handle(), buffer.as_ptr() as w::LPCVOID, size,
-                                           &mut written, ptr::null_mut())));
+            let size = cmp::min(mem::size_of_val(&buffer[..]),
+                                w::DWORD::max_value() as usize) as w::DWORD;
+            try!(check_bool(k32::WriteFile(self.as_raw_handle(),
+                                           buffer.as_ptr() as w::LPCVOID,
+                                           size,
+                                           &mut written,
+                                           ptr::null_mut())));
             Ok(written)
         }
     }
 
-    unsafe fn write_overlapped(&self, buffer: &mut [u8], overlapped: &mut Overlapped) -> io::Result<bool> {
-        let size = cmp::min(mem::size_of_val(&buffer[..]), w::DWORD::max_value() as usize) as w::DWORD;
-        let result = check_bool(k32::WriteFile(self.as_raw_handle(), buffer.as_ptr() as w::LPCVOID, size,
-                                               ptr::null_mut(), overlapped.get()));
+    unsafe fn write_overlapped(&self,
+                               buffer: &mut [u8],
+                               overlapped: &mut Overlapped)
+                               -> io::Result<bool> {
+        let size = cmp::min(mem::size_of_val(&buffer[..]),
+                            w::DWORD::max_value() as usize) as w::DWORD;
+        let result = check_bool(k32::WriteFile(self.as_raw_handle(),
+                                               buffer.as_ptr() as w::LPCVOID,
+                                               size,
+                                               ptr::null_mut(),
+                                               overlapped.get()));
         match result {
             Ok(_) => Ok(true),
             Err(ref error) if error.raw_os_error() == Some(w::ERROR_IO_PENDING as i32) => Ok(false),
@@ -93,8 +115,6 @@ pub trait Writable: Object {
     }
 
     fn flush(&self) -> io::Result<()> {
-        unsafe {
-            check_bool(k32::FlushFileBuffers(self.as_raw_handle())).map(|_| ())
-        }
+        unsafe { check_bool(k32::FlushFileBuffers(self.as_raw_handle())).map(|_| ()) }
     }
 }

@@ -122,9 +122,7 @@ impl Mutex {
     }
 
     pub fn release(&self) -> io::Result<()> {
-        unsafe {
-            check_bool(k32::ReleaseMutex(self.as_raw_handle()))
-        }
+        unsafe { check_bool(k32::ReleaseMutex(self.as_raw_handle())) }
     }
 
     pub fn guard(&self) -> MutexGuard {
@@ -170,14 +168,14 @@ impl<'a> Error for LockError<'a> {
     fn description(&self) -> &str {
         match *self {
             LockError::Abandoned(_) => "abandoned mutex",
-            LockError::Io(ref error) => error.description()
+            LockError::Io(ref error) => error.description(),
         }
     }
 
     fn cause(&self) -> Option<&Error> {
         match *self {
             LockError::Io(ref error) => Some(error),
-            _ => None
+            _ => None,
         }
     }
 }
@@ -185,8 +183,10 @@ impl<'a> Error for LockError<'a> {
 impl<'a> Display for LockError<'a> {
     fn fmt(&self, formatter: &mut Formatter) -> fmt::Result {
         match *self {
-            LockError::Abandoned(_) => write!(formatter, "The thread that owned the mutex terminated"),
-            LockError::Io(ref error) => write!(formatter, "An I/O error occurred: {}", error)
+            LockError::Abandoned(_) => {
+                write!(formatter, "The thread that owned the mutex terminated")
+            }
+            LockError::Io(ref error) => write!(formatter, "An I/O error occurred: {}", error),
         }
     }
 }
@@ -205,14 +205,14 @@ impl<'a> Error for TryLockError<'a> {
         match *self {
             TryLockError::Abandoned(_) => "abandoned mutex",
             TryLockError::WouldBlock => "operation would block",
-            TryLockError::Io(ref error) => error.description()
+            TryLockError::Io(ref error) => error.description(),
         }
     }
 
     fn cause(&self) -> Option<&Error> {
         match *self {
             TryLockError::Io(ref error) => Some(error),
-            _ => None
+            _ => None,
         }
     }
 }
@@ -220,9 +220,11 @@ impl<'a> Error for TryLockError<'a> {
 impl<'a> Display for TryLockError<'a> {
     fn fmt(&self, formatter: &mut Formatter) -> fmt::Result {
         match *self {
-            TryLockError::Abandoned(_) => write!(formatter, "The thread that owned the mutex terminated"),
+            TryLockError::Abandoned(_) => {
+                write!(formatter, "The thread that owned the mutex terminated")
+            }
             TryLockError::WouldBlock => write!(formatter, "The operation would block"),
-            TryLockError::Io(ref error) => write!(formatter, "An I/O error occurred: {}", error)
+            TryLockError::Io(ref error) => write!(formatter, "An I/O error occurred: {}", error),
         }
     }
 }

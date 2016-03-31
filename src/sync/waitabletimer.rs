@@ -169,9 +169,7 @@ impl WaitableTimer {
     }
 
     pub fn cancel(&self) -> io::Result<()> {
-        unsafe {
-            check_bool(k32::CancelWaitableTimer(self.as_raw_handle()))
-        }
+        unsafe { check_bool(k32::CancelWaitableTimer(self.as_raw_handle())) }
     }
 }
 

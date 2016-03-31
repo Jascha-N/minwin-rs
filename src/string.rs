@@ -84,7 +84,8 @@ impl<T: ?Sized> ToWideString for T
 }
 
 
-/// A type representing an owned ANSI string encoded using the system default Windows ANSI code page.
+/// A type representing an owned ANSI string encoded using the system default Windows ANSI code
+/// page.
 pub type AnsiString = Vec<w::CHAR>;
 
 /// Slice into an ANSI string.

@@ -24,7 +24,7 @@ impl<T: Debug + Any> Error for CreateNamedError<T> {
         match *self {
             CreateNamedError::AlreadyExists(_) => "named object already exists",
             CreateNamedError::InvalidName(ref error) => error.description(),
-            CreateNamedError::Io(ref error) => error.description()
+            CreateNamedError::Io(ref error) => error.description(),
         }
     }
 
@@ -32,7 +32,7 @@ impl<T: Debug + Any> Error for CreateNamedError<T> {
         match *self {
             CreateNamedError::InvalidName(ref error) => Some(error),
             CreateNamedError::Io(ref error) => Some(error),
-            _ => None
+            _ => None,
         }
     }
 }
@@ -42,7 +42,9 @@ impl<T> Display for CreateNamedError<T> {
         match *self {
             CreateNamedError::AlreadyExists(_) => write!(formatter, "Named object already exists"),
             CreateNamedError::InvalidName(ref error) => write!(formatter, "{}", error),
-            CreateNamedError::Io(ref error) => write!(formatter, "An I/O error occurred: {}", error)
+            CreateNamedError::Io(ref error) => {
+                write!(formatter, "An I/O error occurred: {}", error)
+            }
         }
     }
 }
@@ -67,7 +69,7 @@ impl<T> CreateNamedError<T> {
     pub fn unwrap(self) -> Option<T> {
         match self {
             CreateNamedError::AlreadyExists(object) => Some(object),
-            _ => None
+            _ => None,
         }
     }
 }
@@ -148,14 +150,14 @@ pub trait NamedObject: ObjectExt {
 #[derive(Debug)]
 pub struct NamedOpenOptions {
     inheritable: bool,
-    desired_access: u32
+    desired_access: u32,
 }
 
 impl NamedOpenOptions {
     pub fn new() -> NamedOpenOptions {
         NamedOpenOptions {
             inheritable: false,
-            desired_access: MaximumAccess.mask()
+            desired_access: MaximumAccess.mask(),
         }
     }
 

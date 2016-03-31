@@ -21,14 +21,14 @@ impl Error for WaitError {
         match *self {
             WaitError::Abandoned(_) => "abandoned mutex",
             WaitError::Timeout => "wait timeout",
-            WaitError::Io(ref error) => error.description()
+            WaitError::Io(ref error) => error.description(),
         }
     }
 
     fn cause(&self) -> Option<&Error> {
         match *self {
             WaitError::Io(ref error) => Some(error),
-            _ => None
+            _ => None,
         }
     }
 }
@@ -38,7 +38,7 @@ impl Display for WaitError {
         match *self {
             WaitError::Abandoned(_) => write!(formatter, "A thread that owned a mutex terminated"),
             WaitError::Timeout => write!(formatter, "A wait timed out"),
-            WaitError::Io(ref error) => write!(formatter, "An I/O error occurred: {}", error)
+            WaitError::Io(ref error) => write!(formatter, "An I/O error occurred: {}", error),
         }
     }
 }

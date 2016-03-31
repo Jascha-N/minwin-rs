@@ -148,18 +148,14 @@ impl Event {
     ///
     /// See [SetEvent](https://msdn.microsoft.com/en-us/library/windows/desktop/ms686211%28v=vs.85%29.aspx).
     pub fn set(&self) -> io::Result<()> {
-        unsafe {
-            check_bool(k32::SetEvent(self.as_raw_handle()))
-        }
+        unsafe { check_bool(k32::SetEvent(self.as_raw_handle())) }
     }
 
     /// Sets the event object to the nonsignaled state.
     ///
     /// See [ResetEvent](https://msdn.microsoft.com/en-us/library/windows/desktop/ms685081%28v=vs.85%29.aspx).
     pub fn reset(&self) -> io::Result<()> {
-        unsafe {
-            check_bool(k32::ResetEvent(self.as_raw_handle()))
-        }
+        unsafe { check_bool(k32::ResetEvent(self.as_raw_handle())) }
     }
 }
 

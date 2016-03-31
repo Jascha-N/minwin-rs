@@ -51,9 +51,7 @@ fn set_flag(handle: RawHandle, flag: u32, enabled: bool) -> io::Result<()> {
     } else {
         0
     };
-    unsafe {
-        check_bool(k32::SetHandleInformation(handle, mask, flags))
-    }
+    unsafe { check_bool(k32::SetHandleInformation(handle, mask, flags)) }
 }
 
 fn get_flag(handle: RawHandle, flag: u32) -> io::Result<bool> {

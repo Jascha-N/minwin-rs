@@ -176,9 +176,7 @@ impl FileMapping {
     }
 
     pub fn flush(&self) -> io::Result<()> {
-        unsafe {
-            check_bool(k32::FlushFileBuffers(self.as_raw_handle()))
-        }
+        unsafe { check_bool(k32::FlushFileBuffers(self.as_raw_handle())) }
     }
 }
 

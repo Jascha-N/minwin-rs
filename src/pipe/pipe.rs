@@ -36,12 +36,10 @@ impl PipeBuilder {
             let mut read = mem::uninitialized();
             let mut write = mem::uninitialized();
 
-            try!(check_bool(
-                k32::CreatePipe(&mut read,
-                                &mut write,
-                                sa.as_mut().map_or(ptr::null_mut(), |sa| sa),
-                                self.size.unwrap_or(0))
-            ));
+            try!(check_bool(k32::CreatePipe(&mut read,
+                                            &mut write,
+                                            sa.as_mut().map_or(ptr::null_mut(), |sa| sa),
+                                            self.size.unwrap_or(0))));
             let read = ReadPipe::from_raw_handle(read);
             let write = WritePipe::from_raw_handle(write);
 
