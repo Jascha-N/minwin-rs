@@ -223,6 +223,8 @@
 <span id="180">180</span>
 <span id="181">181</span>
 <span id="182">182</span>
+<span id="183">183</span>
+<span id="184">184</span>
 </pre><pre class='rust '>
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>io</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>error</span>::<span class='ident'>Error</span>;
@@ -250,7 +252,7 @@
         <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
             <span class='ident'>CreateNamedError</span>::<span class='ident'>AlreadyExists</span>(_) <span class='op'>=&gt;</span> <span class='string'>&quot;named object already exists&quot;</span>,
             <span class='ident'>CreateNamedError</span>::<span class='ident'>InvalidName</span>(<span class='kw-2'>ref</span> <span class='ident'>error</span>) <span class='op'>=&gt;</span> <span class='ident'>error</span>.<span class='ident'>description</span>(),
-            <span class='ident'>CreateNamedError</span>::<span class='ident'>Io</span>(<span class='kw-2'>ref</span> <span class='ident'>error</span>) <span class='op'>=&gt;</span> <span class='ident'>error</span>.<span class='ident'>description</span>()
+            <span class='ident'>CreateNamedError</span>::<span class='ident'>Io</span>(<span class='kw-2'>ref</span> <span class='ident'>error</span>) <span class='op'>=&gt;</span> <span class='ident'>error</span>.<span class='ident'>description</span>(),
         }
     }
 
@@ -258,7 +260,7 @@
         <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
             <span class='ident'>CreateNamedError</span>::<span class='ident'>InvalidName</span>(<span class='kw-2'>ref</span> <span class='ident'>error</span>) <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>(<span class='ident'>error</span>),
             <span class='ident'>CreateNamedError</span>::<span class='ident'>Io</span>(<span class='kw-2'>ref</span> <span class='ident'>error</span>) <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>(<span class='ident'>error</span>),
-            _ <span class='op'>=&gt;</span> <span class='prelude-val'>None</span>
+            _ <span class='op'>=&gt;</span> <span class='prelude-val'>None</span>,
         }
     }
 }
@@ -268,7 +270,9 @@
         <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
             <span class='ident'>CreateNamedError</span>::<span class='ident'>AlreadyExists</span>(_) <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;Named object already exists&quot;</span>),
             <span class='ident'>CreateNamedError</span>::<span class='ident'>InvalidName</span>(<span class='kw-2'>ref</span> <span class='ident'>error</span>) <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;{}&quot;</span>, <span class='ident'>error</span>),
-            <span class='ident'>CreateNamedError</span>::<span class='ident'>Io</span>(<span class='kw-2'>ref</span> <span class='ident'>error</span>) <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;An I/O error occurred: {}&quot;</span>, <span class='ident'>error</span>)
+            <span class='ident'>CreateNamedError</span>::<span class='ident'>Io</span>(<span class='kw-2'>ref</span> <span class='ident'>error</span>) <span class='op'>=&gt;</span> {
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;An I/O error occurred: {}&quot;</span>, <span class='ident'>error</span>)
+            }
         }
     }
 }
@@ -293,7 +297,7 @@
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>unwrap</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
         <span class='kw'>match</span> <span class='self'>self</span> {
             <span class='ident'>CreateNamedError</span>::<span class='ident'>AlreadyExists</span>(<span class='ident'>object</span>) <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>(<span class='ident'>object</span>),
-            _ <span class='op'>=&gt;</span> <span class='prelude-val'>None</span>
+            _ <span class='op'>=&gt;</span> <span class='prelude-val'>None</span>,
         }
     }
 }
@@ -374,14 +378,14 @@
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>NamedOpenOptions</span> {
     <span class='ident'>inheritable</span>: <span class='ident'>bool</span>,
-    <span class='ident'>desired_access</span>: <span class='ident'>u32</span>
+    <span class='ident'>desired_access</span>: <span class='ident'>u32</span>,
 }
 
 <span class='kw'>impl</span> <span class='ident'>NamedOpenOptions</span> {
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>() <span class='op'>-&gt;</span> <span class='ident'>NamedOpenOptions</span> {
         <span class='ident'>NamedOpenOptions</span> {
             <span class='ident'>inheritable</span>: <span class='boolval'>false</span>,
-            <span class='ident'>desired_access</span>: <span class='ident'>MaximumAccess</span>.<span class='ident'>mask</span>()
+            <span class='ident'>desired_access</span>: <span class='ident'>MaximumAccess</span>.<span class='ident'>mask</span>(),
         }
     }
 

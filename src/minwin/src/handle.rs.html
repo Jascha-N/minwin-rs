@@ -136,8 +136,6 @@
 <span id="93">93</span>
 <span id="94">94</span>
 <span id="95">95</span>
-<span id="96">96</span>
-<span id="97">97</span>
 </pre><pre class='rust '>
 <span class='kw'>use</span> <span class='ident'>kernel32</span> <span class='kw'>as</span> <span class='ident'>k32</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::{<span class='ident'>io</span>, <span class='ident'>mem</span>};
@@ -192,9 +190,7 @@
     } <span class='kw'>else</span> {
         <span class='number'>0</span>
     };
-    <span class='kw'>unsafe</span> {
-        <span class='ident'>check_bool</span>(<span class='ident'>k32</span>::<span class='ident'>SetHandleInformation</span>(<span class='ident'>handle</span>, <span class='ident'>mask</span>, <span class='ident'>flags</span>))
-    }
+    <span class='kw'>unsafe</span> { <span class='ident'>check_bool</span>(<span class='ident'>k32</span>::<span class='ident'>SetHandleInformation</span>(<span class='ident'>handle</span>, <span class='ident'>mask</span>, <span class='ident'>flags</span>)) }
 }
 
 <span class='kw'>fn</span> <span class='ident'>get_flag</span>(<span class='ident'>handle</span>: <span class='ident'>RawHandle</span>, <span class='ident'>flag</span>: <span class='ident'>u32</span>) <span class='op'>-&gt;</span> <span class='ident'>io</span>::<span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>bool</span><span class='op'>&gt;</span> {

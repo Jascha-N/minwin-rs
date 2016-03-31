@@ -233,8 +233,6 @@
 <span id="190">190</span>
 <span id="191">191</span>
 <span id="192">192</span>
-<span id="193">193</span>
-<span id="194">194</span>
 </pre><pre class='rust '>
 <span class='kw'>use</span> <span class='ident'>kernel32</span> <span class='kw'>as</span> <span class='ident'>k32</span>;
 <span class='kw'>use</span> <span class='ident'>chrono</span>::{<span class='ident'>DateTime</span>, <span class='ident'>Duration</span>, <span class='ident'>NaiveDate</span>, <span class='ident'>TimeZone</span>, <span class='ident'>UTC</span>};
@@ -407,9 +405,7 @@
     }
 
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>cancel</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>io</span>::<span class='prelude-ty'>Result</span><span class='op'>&lt;</span>()<span class='op'>&gt;</span> {
-        <span class='kw'>unsafe</span> {
-            <span class='ident'>check_bool</span>(<span class='ident'>k32</span>::<span class='ident'>CancelWaitableTimer</span>(<span class='self'>self</span>.<span class='ident'>as_raw_handle</span>()))
-        }
+        <span class='kw'>unsafe</span> { <span class='ident'>check_bool</span>(<span class='ident'>k32</span>::<span class='ident'>CancelWaitableTimer</span>(<span class='self'>self</span>.<span class='ident'>as_raw_handle</span>())) }
     }
 }
 

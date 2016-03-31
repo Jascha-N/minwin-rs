@@ -349,8 +349,6 @@
 <span id="306">306</span>
 <span id="307">307</span>
 <span id="308">308</span>
-<span id="309">309</span>
-<span id="310">310</span>
 </pre><pre class='rust '>
 <span class='kw'>use</span> <span class='ident'>kernel32</span> <span class='kw'>as</span> <span class='ident'>k32</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::{<span class='ident'>io</span>, <span class='ident'>mem</span>, <span class='ident'>ptr</span>, <span class='ident'>slice</span>};
@@ -530,9 +528,7 @@
     }
 
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>flush</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>io</span>::<span class='prelude-ty'>Result</span><span class='op'>&lt;</span>()<span class='op'>&gt;</span> {
-        <span class='kw'>unsafe</span> {
-            <span class='ident'>check_bool</span>(<span class='ident'>k32</span>::<span class='ident'>FlushFileBuffers</span>(<span class='self'>self</span>.<span class='ident'>as_raw_handle</span>()))
-        }
+        <span class='kw'>unsafe</span> { <span class='ident'>check_bool</span>(<span class='ident'>k32</span>::<span class='ident'>FlushFileBuffers</span>(<span class='self'>self</span>.<span class='ident'>as_raw_handle</span>())) }
     }
 }
 

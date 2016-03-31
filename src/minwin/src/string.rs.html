@@ -240,6 +240,7 @@
 <span id="197">197</span>
 <span id="198">198</span>
 <span id="199">199</span>
+<span id="200">200</span>
 </pre><pre class='rust '>
 <span class='kw'>use</span> <span class='ident'>kernel32</span> <span class='kw'>as</span> <span class='ident'>k32</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>error</span>::<span class='ident'>Error</span>;
@@ -327,7 +328,8 @@
 }
 
 
-<span class='doccomment'>/// A type representing an owned ANSI string encoded using the system default Windows ANSI code page.</span>
+<span class='doccomment'>/// A type representing an owned ANSI string encoded using the system default Windows ANSI code</span>
+<span class='doccomment'>/// page.</span>
 <span class='kw'>pub</span> <span class='kw'>type</span> <span class='ident'>AnsiString</span> <span class='op'>=</span> <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>w</span>::<span class='ident'>CHAR</span><span class='op'>&gt;</span>;
 
 <span class='doccomment'>/// Slice into an ANSI string.</span>
