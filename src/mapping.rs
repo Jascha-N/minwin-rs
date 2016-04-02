@@ -170,7 +170,7 @@ impl FileMapping {
             mapping: self,
             offset: 0,
             size: 0,
-            access: FileViewAccess::ReadOnly,
+            write_mode: FileViewWriteMode::ReadOnly,
             executable: false,
         }
     }
@@ -193,9 +193,9 @@ impl NamedObject for FileMapping {
 
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
-pub enum FileViewAccess {
+pub enum FileViewWriteMode {
     ReadOnly,
-    ReadWrite,
+    Write,
     CopyOnWrite,
 }
 
@@ -203,13 +203,13 @@ pub struct FileViewBuilder<'a> {
     mapping: &'a FileMapping,
     offset: u64,
     size: usize,
-    access: FileViewAccess,
+    write_mode: FileViewWriteMode,
     executable: bool,
 }
 
 impl<'a> FileViewBuilder<'a> {
-    pub fn access(&mut self, access: FileViewAccess) -> &mut FileViewBuilder<'a> {
-        self.access = access;
+    pub fn write_mode(&mut self, write_mode: FileViewWriteMode) -> &mut FileViewBuilder<'a> {
+        self.write_mode = write_mode;
         self
     }
 
@@ -229,10 +229,10 @@ impl<'a> FileViewBuilder<'a> {
     }
 
     pub fn map(&self) -> io::Result<FileView> {
-        let mut access = match self.access {
-            FileViewAccess::ReadOnly => w::FILE_MAP_READ,
-            FileViewAccess::ReadWrite => w::FILE_MAP_WRITE,
-            FileViewAccess::CopyOnWrite => w::FILE_MAP_COPY,
+        let mut access = match self.write_mode {
+            FileViewWriteMode::ReadOnly => w::FILE_MAP_READ,
+            FileViewWriteMode::Write => w::FILE_MAP_WRITE,
+            FileViewWriteMode::CopyOnWrite => w::FILE_MAP_COPY,
         };
         if self.executable {
             access |= w::FILE_MAP_EXECUTE
