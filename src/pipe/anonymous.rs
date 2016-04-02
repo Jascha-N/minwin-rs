@@ -85,6 +85,6 @@ impl Write for WritePipe {
     }
 }
 
-pub fn create_pipe() -> io::Result<(ReadPipe, WritePipe)> {
+pub fn create_anonymous_pipe() -> io::Result<(ReadPipe, WritePipe)> {
     PipeBuilder::new().create()
 }

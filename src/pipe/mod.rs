@@ -1,6 +1,6 @@
 use kernel32 as k32;
 use std::{io, mem, ptr};
-use std::ffi::OsString;
+use std::ffi::{OsStr, OsString};
 use std::os::windows::io::AsRawHandle;
 use winapi as w;
 
@@ -88,7 +88,7 @@ pub trait Pipe: Object {
 
     fn client_computer_name(&self) -> io::Result<OsString> {
         unsafe {
-            let mut computer_name: [w::WCHAR; 64] = mem::uninitialized();
+            let mut computer_name: [w::WCHAR; w::CNLEN as usize + 1] = mem::uninitialized();
             try!(check_bool(k32::GetNamedPipeClientComputerNameW(self.as_raw_handle(),
                                                                  computer_name.as_mut_ptr(),
                                                                  computer_name.len() as w::ULONG)));
@@ -167,10 +167,86 @@ pub trait Pipe: Object {
         }
     }
 
+    // TODO: Check server/client
+    fn state(&self) -> io::Result<PipeState> {
+        unsafe {
+            let mut state = mem::uninitialized();
+            let mut current_instances = mem::uninitialized();
+            let mut max_collection_count = mem::uninitialized();
+            let mut collect_data_timeout = mem::uninitialized();
+            let mut user_name: [w::WCHAR; w::UNLEN as usize + 1] = mem::uninitialized();
+
+            try!(check_bool(k32::GetNamedPipeHandleStateW(self.as_raw_handle(),
+                                                          &mut state,
+                                                          &mut current_instances,
+                                                          &mut max_collection_count,
+                                                          &mut collect_data_timeout,
+                                                          user_name.as_mut_ptr(),
+                                                          user_name.len() as w::DWORD)));
+
+            Ok(PipeState {
+                blocking: if state & w::PIPE_NOWAIT != 0 {
+                    true
+                } else {
+                    false
+                },
+                read_mode: if state & w::PIPE_READMODE_MESSAGE != 0 {
+                    ReadMode::Message
+                } else {
+                    ReadMode::Byte
+                },
+                current_instances: current_instances,
+                max_collection_count: max_collection_count,
+                collect_data_timeout: collect_data_timeout,
+                user_name: OsString::from_wide_string_null(&user_name[..]),
+            })
+        }
+    }
+
+    // TODO: Check server/client
+    fn set_state(&self,
+                 blocking: Option<bool>,
+                 read_mode: Option<ReadMode>,
+                 mut max_collection_count: Option<u32>,
+                 mut collect_data_timeout: Option<u32>)
+                 -> io::Result<()> {
+        let blocking_flag = blocking.map(|blocking| {
+            if blocking {
+                w::PIPE_WAIT
+            } else {
+                w::PIPE_NOWAIT
+            }
+        });
+        let read_mode_flag = read_mode.map(|read_mode| {
+            match read_mode {
+                ReadMode::Byte => w::PIPE_READMODE_BYTE,
+                ReadMode::Message => w::PIPE_READMODE_MESSAGE,
+            }
+        });
+        let mut mode = match (blocking_flag, read_mode_flag) {
+            (Some(blocking_flag), Some(read_mode_flag)) => Some(blocking_flag | read_mode_flag),
+            (Some(blocking_flag), None) => Some(blocking_flag),
+            (None, Some(read_mode_flag)) => Some(read_mode_flag),
+            (None, None) => None,
+        };
+
+        unsafe {
+            check_bool(k32::SetNamedPipeHandleState(self.as_raw_handle(),
+                                                    mode.as_mut()
+                                                        .map_or(ptr::null_mut(), |mode| mode),
+                                                    max_collection_count.as_mut()
+                                                                        .map_or(ptr::null_mut(),
+                                                                                |mcc| mcc),
+                                                    collect_data_timeout.as_mut()
+                                                                        .map_or(ptr::null_mut(),
+                                                                                |cdt| cdt)))
+        }
+    }
 }
 
 
 
+#[derive(Debug, Clone)]
 pub struct PipeInfo {
     kind: PipeType,
     end: PipeEnd,
@@ -201,11 +277,15 @@ impl PipeInfo {
     }
 }
 
+
+
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub enum PipeType {
     Byte,
     Message,
 }
+
+
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub enum PipeEnd {
@@ -215,6 +295,53 @@ pub enum PipeEnd {
 
 
 
+#[derive(Debug, Clone)]
+pub struct PipeState {
+    blocking: bool,
+    read_mode: ReadMode,
+    current_instances: u32,
+    max_collection_count: u32,
+    collect_data_timeout: u32,
+    user_name: OsString,
+}
+
+impl PipeState {
+    pub fn blocking(&self) -> bool {
+        self.blocking
+    }
+
+    pub fn read_mode(&self) -> ReadMode {
+        self.read_mode
+    }
+
+    pub fn current_instances(&self) -> u32 {
+        self.current_instances
+    }
+
+    pub fn max_collection_count(&self) -> u32 {
+        self.max_collection_count
+    }
+
+    pub fn collect_data_timeout(&self) -> u32 {
+        self.collect_data_timeout
+    }
+
+    pub fn user_name(&self) -> &OsStr {
+        &self.user_name
+    }
+}
+
+
+
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+pub enum ReadMode {
+    Byte,
+    Message,
+}
+
+
+
+#[derive(Debug, Clone)]
 pub struct PeekInfo {
     bytes_read: u32,
     bytes_left: u32,
