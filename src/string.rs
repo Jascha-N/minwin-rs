@@ -1,10 +1,10 @@
 use kernel32 as k32;
 use std::error::Error;
-use std::ffi::OsStr;
+use std::ffi::{OsStr, OsString};
 use std::fmt::{self, Display, Formatter};
 use std::io::{self, ErrorKind};
 use std::os::raw::c_int;
-use std::os::windows::ffi::OsStrExt;
+use std::os::windows::ffi::{OsStrExt, OsStringExt};
 use std::ptr;
 use winapi as w;
 
@@ -82,6 +82,25 @@ impl<T: ?Sized> ToWideString for T
         self.as_ref().encode_wide().collect::<Vec<_>>()
     }
 }
+
+pub trait FromWideString
+    where Self: Sized
+{
+    fn from_wide_string<W: AsRef<WideStr>>(wide: W) -> Self;
+
+    fn from_wide_string_null<W: AsRef<WideStr>>(wide: W) -> Self {
+        let wide = wide.as_ref();
+        let len = wide.iter().take_while(|&&c| c != 0).count();
+        Self::from_wide_string(&wide[..len])
+    }
+}
+
+impl FromWideString for OsString {
+    fn from_wide_string<W: AsRef<WideStr>>(wide: W) -> OsString {
+        OsStringExt::from_wide(wide.as_ref())
+    }
+}
+
 
 
 /// A type representing an owned ANSI string encoded using the system default Windows ANSI code
