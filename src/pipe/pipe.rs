@@ -59,7 +59,7 @@ impl Readable for ReadPipe {}
 
 impl Read for ReadPipe {
     fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
-        Readable::read(self, buf).map(|read| read as usize)
+        IoHelper(self).read(buf)
     }
 }
 
@@ -74,11 +74,11 @@ impl Writable for WritePipe {}
 
 impl Write for WritePipe {
     fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
-        Writable::write(self, buf).map(|written| written as usize)
+        IoHelper(self).write(buf)
     }
 
     fn flush(&mut self) -> io::Result<()> {
-        Writable::flush(self)
+        IoHelper(self).flush()
     }
 }
 

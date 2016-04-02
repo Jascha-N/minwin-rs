@@ -1,5 +1,5 @@
 use kernel32 as k32;
-use std::{cmp, io, mem, ptr};
+use std::{io, mem, ptr};
 use std::os::windows::io::{AsRawHandle, FromRawHandle, IntoRawHandle};
 use winapi as w;
 
@@ -49,10 +49,9 @@ impl<T> ObjectExt for T where T: Object + FromRawHandle + IntoRawHandle {}
 
 pub trait Readable: Object {
     fn read(&self, buffer: &mut [u8]) -> io::Result<u32> {
+        let size = buffer_size_dword(buffer);
         unsafe {
             let mut read = mem::uninitialized();
-            let size = cmp::min(mem::size_of_val(&buffer[..]),
-                                w::DWORD::max_value() as usize) as w::DWORD;
             try!(check_bool(k32::ReadFile(self.as_raw_handle(),
                                           buffer.as_mut_ptr() as w::LPVOID,
                                           size,
@@ -66,8 +65,7 @@ pub trait Readable: Object {
                               buffer: &mut [u8],
                               overlapped: &mut Overlapped)
                               -> io::Result<bool> {
-        let size = cmp::min(mem::size_of_val(&buffer[..]),
-                            w::DWORD::max_value() as usize) as w::DWORD;
+        let size = buffer_size_dword(buffer);
         let result = check_bool(k32::ReadFile(self.as_raw_handle(),
                                               buffer.as_mut_ptr() as w::LPVOID,
                                               size,
@@ -83,10 +81,9 @@ pub trait Readable: Object {
 
 pub trait Writable: Object {
     fn write(&self, buffer: &[u8]) -> io::Result<u32> {
+        let size = buffer_size_dword(buffer);
         unsafe {
             let mut written = mem::uninitialized();
-            let size = cmp::min(mem::size_of_val(&buffer[..]),
-                                w::DWORD::max_value() as usize) as w::DWORD;
             try!(check_bool(k32::WriteFile(self.as_raw_handle(),
                                            buffer.as_ptr() as w::LPCVOID,
                                            size,
@@ -100,8 +97,7 @@ pub trait Writable: Object {
                                buffer: &mut [u8],
                                overlapped: &mut Overlapped)
                                -> io::Result<bool> {
-        let size = cmp::min(mem::size_of_val(&buffer[..]),
-                            w::DWORD::max_value() as usize) as w::DWORD;
+        let size = buffer_size_dword(buffer);
         let result = check_bool(k32::WriteFile(self.as_raw_handle(),
                                                buffer.as_ptr() as w::LPCVOID,
                                                size,
