@@ -9,9 +9,9 @@ use overlapped::Overlapped;
 use string::FromWideString;
 use util::*;
 
-pub use self::pipe::*;
+pub use self::anonymous::*;
 
-mod pipe;
+mod anonymous;
 
 pub trait Pipe: Object {
     // fn read_message(&self, buffer: &mut Vec<u8>) -> io::Result<usize> {
@@ -167,9 +167,6 @@ pub trait Pipe: Object {
         }
     }
 
-    // fn state(&self) -> io::Result<PipeState> {
-
-    // }
 }
 
 

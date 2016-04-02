@@ -4,6 +4,7 @@ use std::io::{self, Read, Write};
 use std::os::windows::io::{AsRawHandle, FromRawHandle};
 use winapi as w;
 
+use super::Pipe;
 use handle::Handle;
 use object::{Readable, Writable};
 use util::*;
@@ -56,6 +57,7 @@ pub struct ReadPipe(Handle);
 handle!(ReadPipe);
 
 impl Readable for ReadPipe {}
+impl Pipe for ReadPipe {}
 
 impl Read for ReadPipe {
     fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
@@ -71,6 +73,7 @@ pub struct WritePipe(Handle);
 handle!(WritePipe);
 
 impl Writable for WritePipe {}
+impl Pipe for WritePipe {}
 
 impl Write for WritePipe {
     fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
