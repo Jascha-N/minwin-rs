@@ -2,7 +2,7 @@ use winapi as w;
 
 
 
-pub const WC_ERR_INVALID_CHARS: w::DWORD = 0x80;
+// pub const WC_ERR_INVALID_CHARS: w::DWORD = 0x80;
 
 pub const HANDLE_FLAG_INHERIT: w::DWORD = 0x00000001;
 pub const HANDLE_FLAG_PROTECT_FROM_CLOSE: w::DWORD = 0x00000002;

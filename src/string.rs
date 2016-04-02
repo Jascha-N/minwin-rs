@@ -8,7 +8,6 @@ use std::os::windows::ffi::{OsStrExt, OsStringExt};
 use std::ptr;
 use winapi as w;
 
-use constants as c;
 use util::*;
 
 
@@ -67,7 +66,7 @@ pub trait ToWideString {
     /// found.
     fn to_wide_string_null(&self) -> Result<WideString, NulError> {
         let mut wide = self.to_wide_string();
-        if let Some(position) = wide.iter().position(|c| *c == 0) {
+        if let Some(position) = wide.iter().position(|&c| c == 0) {
             return Err(NulError(position, wide));
         }
         wide.push(0);
@@ -90,8 +89,11 @@ pub trait FromWideString
 
     fn from_wide_string_null<W: AsRef<WideStr>>(wide: W) -> Self {
         let wide = wide.as_ref();
-        let len = wide.iter().take_while(|&&c| c != 0).count();
-        Self::from_wide_string(&wide[..len])
+        if let Some(position) = wide.iter().position(|&c| c == 0) {
+            Self::from_wide_string(&wide[..position])
+        } else {
+            Self::from_wide_string(wide)
+        }
     }
 }
 
@@ -146,7 +148,7 @@ fn wide_to_ansi_inner(wide: &WideStr, null_terminated: bool) -> io::Result<AnsiS
     };
     unsafe {
         let ansi_len = try!(check_int(k32::WideCharToMultiByte(w::CP_ACP,
-                                                               c::WC_ERR_INVALID_CHARS,
+                                                               0,
                                                                wide.as_ptr(),
                                                                wide_len,
                                                                ptr::null_mut(),
@@ -158,7 +160,7 @@ fn wide_to_ansi_inner(wide: &WideStr, null_terminated: bool) -> io::Result<AnsiS
         ansi.set_len(ansi_len as usize);
 
         let ansi_len = try!(check_int(k32::WideCharToMultiByte(w::CP_ACP,
-                                                               c::WC_ERR_INVALID_CHARS,
+                                                               0,
                                                                wide.as_ptr(),
                                                                wide_len,
                                                                ansi.as_mut_ptr(),
@@ -189,7 +191,7 @@ fn ansi_to_wide_inner(ansi: &AnsiStr, null_terminated: bool) -> io::Result<WideS
     };
     unsafe {
         let wide_len = try!(check_int(k32::MultiByteToWideChar(w::CP_ACP,
-                                                               c::WC_ERR_INVALID_CHARS,
+                                                               0,
                                                                ansi.as_ptr(),
                                                                ansi_len,
                                                                ptr::null_mut(),
@@ -199,7 +201,7 @@ fn ansi_to_wide_inner(ansi: &AnsiStr, null_terminated: bool) -> io::Result<WideS
         wide.set_len(wide_len as usize);
 
         let wide_len = try!(check_int(k32::MultiByteToWideChar(w::CP_ACP,
-                                                               c::WC_ERR_INVALID_CHARS,
+                                                               0,
                                                                ansi.as_ptr(),
                                                                ansi_len,
                                                                wide.as_mut_ptr(),
