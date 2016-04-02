@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["create_anonymous_pipe",""]],"struct":[["PipeBuilder",""],["ReadPipe",""],["WritePipe",""]]});

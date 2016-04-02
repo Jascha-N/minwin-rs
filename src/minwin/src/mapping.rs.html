@@ -522,7 +522,7 @@
             <span class='ident'>mapping</span>: <span class='self'>self</span>,
             <span class='ident'>offset</span>: <span class='number'>0</span>,
             <span class='ident'>size</span>: <span class='number'>0</span>,
-            <span class='ident'>access</span>: <span class='ident'>FileViewAccess</span>::<span class='ident'>ReadOnly</span>,
+            <span class='ident'>write_mode</span>: <span class='ident'>FileViewWriteMode</span>::<span class='ident'>ReadOnly</span>,
             <span class='ident'>executable</span>: <span class='boolval'>false</span>,
         }
     }
@@ -545,9 +545,9 @@
 
 
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>Clone</span>, <span class='ident'>Copy</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>FileViewAccess</span> {
+<span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>FileViewWriteMode</span> {
     <span class='ident'>ReadOnly</span>,
-    <span class='ident'>ReadWrite</span>,
+    <span class='ident'>Write</span>,
     <span class='ident'>CopyOnWrite</span>,
 }
 
@@ -555,13 +555,13 @@
     <span class='ident'>mapping</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>FileMapping</span>,
     <span class='ident'>offset</span>: <span class='ident'>u64</span>,
     <span class='ident'>size</span>: <span class='ident'>usize</span>,
-    <span class='ident'>access</span>: <span class='ident'>FileViewAccess</span>,
+    <span class='ident'>write_mode</span>: <span class='ident'>FileViewWriteMode</span>,
     <span class='ident'>executable</span>: <span class='ident'>bool</span>,
 }
 
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> <span class='ident'>FileViewBuilder</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> {
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>access</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>access</span>: <span class='ident'>FileViewAccess</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>FileViewBuilder</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> {
-        <span class='self'>self</span>.<span class='ident'>access</span> <span class='op'>=</span> <span class='ident'>access</span>;
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>write_mode</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>write_mode</span>: <span class='ident'>FileViewWriteMode</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>FileViewBuilder</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> {
+        <span class='self'>self</span>.<span class='ident'>write_mode</span> <span class='op'>=</span> <span class='ident'>write_mode</span>;
         <span class='self'>self</span>
     }
 
@@ -581,10 +581,10 @@
     }
 
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>map</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>io</span>::<span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>FileView</span><span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>access</span> <span class='op'>=</span> <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>access</span> {
-            <span class='ident'>FileViewAccess</span>::<span class='ident'>ReadOnly</span> <span class='op'>=&gt;</span> <span class='ident'>w</span>::<span class='ident'>FILE_MAP_READ</span>,
-            <span class='ident'>FileViewAccess</span>::<span class='ident'>ReadWrite</span> <span class='op'>=&gt;</span> <span class='ident'>w</span>::<span class='ident'>FILE_MAP_WRITE</span>,
-            <span class='ident'>FileViewAccess</span>::<span class='ident'>CopyOnWrite</span> <span class='op'>=&gt;</span> <span class='ident'>w</span>::<span class='ident'>FILE_MAP_COPY</span>,
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>access</span> <span class='op'>=</span> <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>write_mode</span> {
+            <span class='ident'>FileViewWriteMode</span>::<span class='ident'>ReadOnly</span> <span class='op'>=&gt;</span> <span class='ident'>w</span>::<span class='ident'>FILE_MAP_READ</span>,
+            <span class='ident'>FileViewWriteMode</span>::<span class='ident'>Write</span> <span class='op'>=&gt;</span> <span class='ident'>w</span>::<span class='ident'>FILE_MAP_WRITE</span>,
+            <span class='ident'>FileViewWriteMode</span>::<span class='ident'>CopyOnWrite</span> <span class='op'>=&gt;</span> <span class='ident'>w</span>::<span class='ident'>FILE_MAP_COPY</span>,
         };
         <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>executable</span> {
             <span class='ident'>access</span> <span class='op'>|=</span> <span class='ident'>w</span>::<span class='ident'>FILE_MAP_EXECUTE</span>

@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["FileMappingAccess",""],["FileMappingAttribute",""],["FileViewAccess",""]],"struct":[["FileMapping",""],["FileMappingBuilder",""],["FileView",""],["FileViewBuilder",""]]});
+initSidebarItems({"enum":[["FileMappingAccess",""],["FileMappingAttribute",""],["FileViewWriteMode",""]],"struct":[["FileMapping",""],["FileMappingBuilder",""],["FileView",""],["FileViewBuilder",""]]});

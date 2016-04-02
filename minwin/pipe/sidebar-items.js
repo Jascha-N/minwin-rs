@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["create_pipe",""]],"struct":[["PipeBuilder",""],["ReadPipe",""],["WritePipe",""]]});
+initSidebarItems({"enum":[["PipeEnd",""],["PipeType",""],["ReadMode",""]],"fn":[["create_anonymous_pipe",""]],"struct":[["PeekInfo",""],["PipeBuilder",""],["PipeInfo",""],["PipeState",""],["ReadPipe",""],["WritePipe",""]],"trait":[["Pipe",""]]});
